@@ -1,0 +1,71 @@
+{
+  "name": "intelica",
+  "version": "4.5.0",
+  "title": "Intelica — Competitive Intelligence API",
+  "description": "Competitive intelligence API for autonomous AI agents. Analyzes any URL or company description and returns structured JSON with market positioning, user pain points, detected competitors, unique angles, and an executable Market Score. Pay-per-call via x402 on Base and Solana mainnet.",
+  "category": "intelligence",
+  "tags": [
+    "competitive-intelligence",
+    "market-research",
+    "x402",
+    "solana",
+    "base",
+    "ai-agents",
+    "a2a",
+    "mcp",
+    "multilingual"
+  ],
+  "endpoint": "https://intelica.onrender.com",
+  "mcp_endpoint": "https://intelica.onrender.com/mcp",
+  "agent_card": "https://intelica.onrender.com/agent-card.json",
+  "llms_txt": "https://intelica.onrender.com/llms.txt",
+  "openapi": "https://intelica.onrender.com/openapi.json",
+  "health": "https://intelica.onrender.com/health",
+  "payment": {
+    "protocol": "x402",
+    "networks": ["base-mainnet", "solana-mainnet"],
+    "asset": "USDC",
+    "price_per_call": "0.05",
+    "price_batch": "0.20",
+    "wallets": {
+      "base": "0x1d6bA7ac2461fd0E17D6A4C7bc1c9Ce365EfC4FF",
+      "solana": "45q8KyCAGSHHd6qYP2ZkEJh22SzeQeXRfyFsENcx3KN6"
+    }
+  },
+  "capabilities": {
+    "context_modes": ["competitive", "fundraising", "partnership", "acquisition", "market_entry"],
+    "market_score": true,
+    "trend_tracking": true,
+    "competitive_graph": true,
+    "a2a_protocol": true,
+    "mcp_server": true,
+    "intelligence_budget": true,
+    "multilingual": true,
+    "languages": ["en", "es", "pt", "de", "fr", "it", "ja", "ko", "zh"],
+    "batch_analysis": true,
+    "cache_6h": true
+  },
+  "tools": [
+    {
+      "name": "analyze_competitor",
+      "description": "Analyze a competitor URL or description. Returns positioning, pain points, competitors, market score, and unique angles.",
+      "price_usdc": "0.05"
+    },
+    {
+      "name": "batch_analyze",
+      "description": "Analyze up to 10 competitors in one call.",
+      "price_usdc": "0.20"
+    }
+  ],
+  "stack": {
+    "runtime": "FastAPI + Python 3.11",
+    "llm": "claude-haiku-4-5-20251001",
+    "persistence": "Supabase",
+    "deploy": "Render (AWS us-east)",
+    "facilitator": "PayAI Network"
+  },
+  "open_source": true,
+  "license": "MIT",
+  "repository": "https://github.com/teodorofodocrispin-cmyk/Intelica",
+  "author": "teodorofodocrispin-cmyk"
+}
