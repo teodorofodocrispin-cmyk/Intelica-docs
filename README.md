@@ -1,0 +1,358 @@
+# Intelica
+
+**Competitive intelligence API for autonomous AI agents — pay-per-call via x402.**
+
+Analyze any URL or company description and get back structured JSON with market positioning, user pain points, detected competitors, unique angles, and an executable Market Score. Pay $0.05 USDC per call on Base or Solana mainnet. No accounts, no API keys, no subscriptions.
+
+**Live:** `https://intelica.onrender.com` · **Version:** v4.5.0
+
+---
+
+## What makes Intelica different
+
+| Feature | Description |
+|---|---|
+| **5 Context Modes** | `competitive` · `fundraising` · `partnership` · `acquisition` · `market_entry` |
+| **Market Score** | `threat_level` · `moat_strength` · `market_maturity` · `agent_recommendation` |
+| **8 Languages** | Auto-detects ES, PT, DE, FR, IT, JA, KO, ZH — applies regional market context |
+| **Trend Tracking** | Detects changes between analyses — `status: changed`, `changes: [...]` |
+| **Competitive Graph** | `GET /graph` — maps relationships between competitors across all analyses |
+| **A2A Protocol** | `/message/send` — compatible with LangGraph, CrewAI, AutoGen, Google ADK |
+| **Intelligence Budget** | Per-operator daily limits via `operator_id` field |
+| **Dual network** | Base mainnet + Solana mainnet — agent pays on whichever network it prefers |
+
+---
+
+## Quick start
+
+```bash
+# 1. Without payment → returns 402 with payment instructions
+curl -X POST https://intelica.onrender.com/intel \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Notion is an all-in-one workspace for teams"}'
+
+# 2. Free demo (300 char limit)
+curl -X POST https://intelica.onrender.com/demo \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Notion is an all-in-one workspace for teams"}'
+```
+
+---
+
+## POST /intel
+
+Single competitive intelligence analysis — **$0.05 USDC via x402**.
+
+```json
+POST /intel
+X-PAYMENT: <x402 signed payment>
+
+{
+  "url": "https://notion.so",
+  "context": "I'm building a note-taking app for developers",
+  "mode": "competitive"
+}
+```
+
+**Response:**
+```json
+{
+  "source": "https://notion.so",
+  "analysis": {
+    "company_or_product": "Notion",
+    "positioning_summary": "All-in-one workspace combining notes, docs, and databases...",
+    "target_customer": "Teams and individuals seeking productivity tools",
+    "core_value_props": ["Flexible databases", "Collaborative docs", "Template library"],
+    "user_pain_points": ["Complex for new users", "Slow on large pages", "Limited offline support"],
+    "detected_competitors": ["Obsidian", "Coda", "Confluence"],
+    "unique_angle": "Developer-focused simplicity gap — Notion targets everyone, leaving power users underserved",
+    "tone": "professional",
+    "confidence": "high",
+    "market_score": {
+      "threat_level": "high",
+      "moat_strength": 0.78,
+      "market_maturity": "mature",
+      "agent_recommendation": "counter"
+    }
+  },
+  "mode": "competitive",
+  "detected_language": "en",
+  "market_context": "global",
+  "trend": {
+    "status": "new",
+    "changes": [],
+    "snapshot_count": 1
+  },
+  "cached": false,
+  "response_ms": 1240,
+  "price_paid_usdc": "0.05"
+}
+```
+
+---
+
+## Context Modes
+
+Pass `mode` to get context-specific analysis:
+
+| Mode | Use when |
+|---|---|
+| `competitive` | Standard competitor analysis (default) |
+| `fundraising` | Evaluating investor narrative, TAM, traction signals |
+| `partnership` | Assessing strategic fit — complement or rival? |
+| `acquisition` | Due diligence — moat, technical risk, acquisition thesis |
+| `market_entry` | Market gaps, saturation, barriers to entry |
+
+```json
+{ "text": "...", "mode": "fundraising" }
+```
+
+---
+
+## Market Score
+
+Every analysis includes a `market_score` block with executable fields:
+
+- **`threat_level`** — `high` | `medium` | `low`
+- **`moat_strength`** — 0.0 to 1.0 (how hard is it to compete against them)
+- **`market_maturity`** — `emerging` | `growing` | `mature` | `declining`
+- **`agent_recommendation`** — `monitor` | `counter` | `ignore` | `partner`
+
+---
+
+## 8 Languages — Auto-detected
+
+Intelica detects the language of the content and applies the appropriate regional market context automatically:
+
+| Language | Market Context |
+|---|---|
+| ES | LATAM / Spain — pricing sensitivity, mobile-first, informal economy |
+| PT | Brazil / Portugal — Pix ecosystem, LGPD compliance |
+| DE | DACH — enterprise-first, privacy-conscious, structured procurement |
+| FR | France / Francophone — European regulatory, state involvement in tech |
+| IT | Italy — SME-heavy, design-driven, family business culture |
+| JA | Japan — keiretsu structures, quality-obsessed, long sales cycles |
+| KO | Korea — chaebol dynamics, Kakao/Naver ecosystem |
+| ZH | China — BAT ecosystem, data localization, domestic/international split |
+
+No configuration needed — just pass the content in any language.
+
+---
+
+## Trend Tracking
+
+On repeated analyses of the same company, Intelica compares the current result with the previous snapshot and returns a `trend` object:
+
+```json
+"trend": {
+  "status": "changed",
+  "changes": [
+    { "field": "threat_level", "from": "medium", "to": "high" },
+    { "field": "agent_recommendation", "from": "monitor", "to": "counter" },
+    { "field": "moat_strength", "from": 0.5, "to": 0.7, "delta": 0.2 },
+    { "field": "detected_competitors", "added": ["Linear"] }
+  ],
+  "previous_snapshot": "2026-06-01T00:00:00Z"
+}
+```
+
+---
+
+## Competitive Graph
+
+`GET /graph` — returns the accumulated competitive relationship map across all analyses.
+
+```bash
+# Full graph
+curl https://intelica.onrender.com/graph
+
+# Subgraph centered on a company
+curl "https://intelica.onrender.com/graph?company=Notion"
+```
+
+Returns nodes (companies), edges (competitive relationships), and `hub_competitors` — companies that appear most frequently as competitors across all analyses.
+
+---
+
+## A2A Protocol
+
+`POST /message/send` — compatible with LangGraph, CrewAI, AutoGen, Google ADK.
+
+```json
+POST /message/send
+
+{
+  "message": {
+    "role": "user",
+    "parts": [
+      { "type": "text", "text": "mode: fundraising\nAnalyze Notion as a competitor" }
+    ]
+  }
+}
+```
+
+Free tier — basic analysis without payment. Upgrade to `/intel` for full analysis with trend tracking and graph updates.
+
+---
+
+## POST /batch
+
+Up to 10 analyses in one call — **$0.20 USDC via x402**.
+
+```json
+{
+  "items": [
+    { "url": "https://notion.so", "mode": "competitive" },
+    { "text": "Coda is a collaborative doc platform", "mode": "acquisition" },
+    { "url": "https://obsidian.md", "mode": "partnership" }
+  ]
+}
+```
+
+---
+
+## Intelligence Budget
+
+Limit daily analyses per operator pipeline. Pass `operator_id` in any request:
+
+```json
+{ "text": "...", "mode": "competitive", "operator_id": "my-pipeline-v1" }
+```
+
+Budget enforcement is configured server-side via `intel_budgets` table in Supabase.
+
+---
+
+## Endpoints
+
+| Method | Path | Auth | Price |
+|---|---|---|---|
+| GET | `/` | None | Free |
+| GET | `/health` | None | Free |
+| GET | `/pricing` | None | Free |
+| GET | `/llms.txt` | None | Free |
+| GET | `/graph` | None | Free |
+| GET | `/.well-known/x402.json` | None | Free |
+| GET | `/agent-card.json` | None | Free |
+| POST | `/demo` | None | Free (300 chars) |
+| POST | `/message/send` | None | Free (A2A basic) |
+| POST | `/mcp` | x402 | $0.05 USDC |
+| POST | `/intel` | x402 | $0.05 USDC |
+| POST | `/batch` | x402 | $0.20 USDC (up to 10) |
+
+---
+
+## Integration Examples
+
+### LangChain
+
+```python
+from langchain.tools import tool
+import httpx
+
+@tool
+def analyze_competitor(url: str, mode: str = "competitive") -> dict:
+    """Analyze a competitor URL using Intelica. Returns structured competitive intelligence."""
+    from x402.client import PaymentClient
+    client = PaymentClient(wallet_private_key="your_evm_private_key")
+    response = client.post(
+        "https://intelica.onrender.com/intel",
+        json={"url": url, "mode": mode}
+    )
+    return response.json()
+
+# Use in an agent
+from langchain.agents import initialize_agent, AgentType
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(model="gpt-4")
+agent = initialize_agent([analyze_competitor], llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION)
+agent.run("Analyze Notion as a competitor for a note-taking app")
+```
+
+### LlamaIndex
+
+```python
+from llama_index.core.tools import FunctionTool
+import httpx
+
+def intelica_analyze(text: str, mode: str = "competitive") -> str:
+    """Analyze a company or product description and return competitive intelligence."""
+    from x402.client import PaymentClient
+    client = PaymentClient(wallet_private_key="your_evm_private_key")
+    response = client.post(
+        "https://intelica.onrender.com/intel",
+        json={"text": text, "mode": mode}
+    )
+    return str(response.json()["analysis"])
+
+intelica_tool = FunctionTool.from_defaults(fn=intelica_analyze)
+```
+
+### Free demo (no payment required)
+
+```python
+import httpx
+
+response = httpx.post(
+    "https://intelica.onrender.com/demo",
+    json={"text": "Notion is an all-in-one workspace for notes and databases"}
+)
+print(response.json()["analysis"]["market_score"])
+# {"threat_level": "high", "moat_strength": 0.78, "agent_recommendation": "counter"}
+```
+
+---
+
+## Payment via x402
+
+**Base mainnet (EVM):**
+```python
+import httpx
+from x402.client import PaymentClient
+
+client = PaymentClient(wallet_private_key="your_evm_private_key")
+response = client.post(
+    "https://intelica.onrender.com/intel",
+    json={"url": "https://competitor.com", "mode": "competitive"}
+)
+```
+
+**Solana mainnet:**
+The 402 response includes both Base and Solana payment options. Solana clients use `solana-mainnet` network entry from the `accepts` array.
+
+---
+
+## Deploy your own
+
+1. Fork this repo
+2. Connect to [Render](https://render.com) → New Web Service → select repo
+3. Render detects `render.yaml` automatically
+4. Add environment variables:
+   - `ANTHROPIC_API_KEY`
+   - `WALLET_ADDRESS` (EVM — Base mainnet)
+   - `WALLET_SOLANA` (Solana mainnet)
+   - `SUPABASE_URL`
+   - `SUPABASE_SERVICE_KEY`
+5. Deploy — live in ~2 minutes
+
+---
+
+## Stack
+
+- **Runtime:** FastAPI + Python 3.11
+- **LLM:** Claude Haiku 4.5 (Anthropic)
+- **Payments:** x402 protocol — USDC on Base + Solana mainnet
+- **Facilitator:** PayAI Network
+- **Persistence:** Supabase (PostgreSQL)
+- **Deploy:** Render (AWS us-east)
+- **Wallets:**
+  - Base: `0x1d6bA7ac2461fd0E17D6A4C7bc1c9Ce365EfC4FF`
+  - Solana: `45q8KyCAGSHHd6qYP2ZkEJh22SzeQeXRfyFsENcx3KN6`
+
+---
+
+## License
+
+MIT
+
