@@ -1,5 +1,10 @@
 # Intelica
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/teodorofodocrispin-cmyk/Intelica-docs/main/ChatGPT%20Image%207%20jun%202026%2C%2003_21_28%20p.m..png" alt="Intelica Logo" width="300"/>
+</p>
+
+
 **Competitive intelligence API for autonomous AI agents — pay-per-call via x402.**
 
 Analyze any URL or company description and get back structured JSON with market positioning, user pain points, detected competitors, unique angles, and an executable Market Score. Pay $0.05 USDC per call on Base or Solana mainnet. No accounts, no API keys, no subscriptions.
