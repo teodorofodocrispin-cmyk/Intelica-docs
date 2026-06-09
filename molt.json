@@ -15,12 +15,12 @@
     "mcp",
     "multilingual"
   ],
-  "endpoint": "https://intelica.onrender.com",
-  "mcp_endpoint": "https://intelica.onrender.com/mcp",
-  "agent_card": "https://intelica.onrender.com/agent-card.json",
-  "llms_txt": "https://intelica.onrender.com/llms.txt",
-  "openapi": "https://intelica.onrender.com/openapi.json",
-  "health": "https://intelica.onrender.com/health",
+  "endpoint": "https://api.intelica.dev",
+  "mcp_endpoint": "https://api.intelica.dev/mcp",
+  "agent_card": "https://api.intelica.dev/agent-card.json",
+  "llms_txt": "https://api.intelica.dev/llms.txt",
+  "openapi": "https://api.intelica.dev/openapi.json",
+  "health": "https://api.intelica.dev/health",
   "payment": {
     "protocol": "x402",
     "networks": ["base-mainnet", "solana-mainnet"],
