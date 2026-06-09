@@ -16,7 +16,7 @@ Analyzes any URL or company description and returns structured JSON with:
 
 ### Standard call (x402 payment required)
 ```
-POST https://intelica.onrender.com/intel
+POST https://api.intelica.dev/intel
 Header: X-PAYMENT: <x402_usdc_token>
 Content-Type: application/json
 
@@ -28,7 +28,7 @@ Content-Type: application/json
 
 ### Free demo (no payment, 300 char limit)
 ```
-POST https://intelica.onrender.com/demo
+POST https://api.intelica.dev/demo
 Content-Type: application/json
 
 {
@@ -39,7 +39,7 @@ Content-Type: application/json
 
 ### MCP integration
 ```
-Server URL: https://intelica.onrender.com/mcp
+Server URL: https://api.intelica.dev/mcp
 Protocol: JSON-RPC 2.0
 Tools: analyze_competitor, batch_analyze
 ```
@@ -70,7 +70,7 @@ Intelica uses the x402 protocol — HTTP 402 Payment Required.
 5. Receive structured JSON analysis
 
 Networks: `base-mainnet`, `solana-mainnet`  
-x402 manifest: https://intelica.onrender.com/.well-known/x402.json
+x402 manifest: https://api.intelica.dev/.well-known/x402.json
 
 ## Output format
 
@@ -123,7 +123,7 @@ x402 manifest: https://intelica.onrender.com/.well-known/x402.json
 Analyze up to 10 competitors in parallel:
 
 ```
-POST https://intelica.onrender.com/batch
+POST https://api.intelica.dev/batch
 Header: X-PAYMENT: <x402_token>
 Price: $0.20 USDC
 
@@ -138,12 +138,12 @@ Price: $0.20 USDC
 
 ## Discovery endpoints
 
-- Health: `GET https://intelica.onrender.com/health`
-- OpenAPI: `GET https://intelica.onrender.com/openapi.json`
-- Pricing: `GET https://intelica.onrender.com/pricing`
-- x402 manifest: `GET https://intelica.onrender.com/.well-known/x402.json`
-- llms.txt: `GET https://intelica.onrender.com/llms.txt`
-- Competitive Graph: `GET https://intelica.onrender.com/graph`
+- Health: `GET https://api.intelica.dev/health`
+- OpenAPI: `GET https://api.intelica.dev/openapi.json`
+- Pricing: `GET https://api.intelica.dev/pricing`
+- x402 manifest: `GET https://api.intelica.dev/.well-known/x402.json`
+- llms.txt: `GET https://api.intelica.dev/llms.txt`
+- Competitive Graph: `GET https://api.intelica.dev/graph`
 
 ## Resources
 
