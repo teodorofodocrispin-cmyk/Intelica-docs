@@ -11,7 +11,7 @@ trigger: >
   identify user pain points, assess acquisition targets, evaluate partnership fit,
   or discover market entry opportunities. Also use when monitoring competitors
   over time — Intelica tracks changes between analyses via Trend Tracking.
-endpoint: https://intelica.onrender.com
+endpoint: https://api.intelica.dev
 payment:
   protocol: x402
   networks:
@@ -42,7 +42,7 @@ any strategic decision that requires understanding a competitor's market positio
 ### Step 1 — Free demo (no payment)
 
 ```bash
-POST https://intelica.onrender.com/demo
+POST https://api.intelica.dev/demo
 Content-Type: application/json
 
 {
@@ -54,7 +54,7 @@ Content-Type: application/json
 
 ```bash
 # First call returns 402 with payment instructions
-POST https://intelica.onrender.com/intel
+POST https://api.intelica.dev/intel
 Content-Type: application/json
 
 {
@@ -70,7 +70,7 @@ Content-Type: application/json
 ### Step 3 — Batch (up to 10 analyses for $0.20)
 
 ```bash
-POST https://intelica.onrender.com/batch
+POST https://api.intelica.dev/batch
 X-PAYMENT: <x402 signed payment>
 Content-Type: application/json
 
@@ -128,7 +128,7 @@ Content-Type: application/json
 Compatible with LangGraph, CrewAI, AutoGen, Google ADK:
 
 ```json
-POST https://intelica.onrender.com/message/send
+POST https://api.intelica.dev/message/send
 
 {
   "message": {
