@@ -23,7 +23,7 @@ import httpx
 
 def analyze(text: str, mode: str = "competitive") -> dict:
     response = httpx.post(
-        "https://intelica.onrender.com/demo",
+        "https://api.intelica.dev/demo",
         json={"text": text[:300], "mode": mode}
     )
     return response.json()["analysis"]
@@ -41,7 +41,7 @@ import httpx
 
 def analyze_paid(text: str, mode: str = "competitive", payment_token: str = "") -> dict:
     response = httpx.post(
-        "https://intelica.onrender.com/intel",
+        "https://api.intelica.dev/intel",
         headers={"X-PAYMENT": payment_token},
         json={"text": text, "mode": mode}
     )
@@ -80,7 +80,7 @@ Add to your `.cursor/mcp.json`:
 {
   "mcpServers": {
     "intelica": {
-      "url": "https://intelica.onrender.com/mcp"
+      "url": "https://api.intelica.dev/mcp"
     }
   }
 }
@@ -89,7 +89,7 @@ Add to your `.cursor/mcp.json`:
 Then use tools: `analyze_competitor`, `batch_analyze`
 
 ## Links
-- Demo: https://intelica.onrender.com/demo
-- OpenAPI: https://intelica.onrender.com/openapi.json
+- Demo: https://api.intelica.dev/demo
+- OpenAPI: https://api.intelica.dev/openapi.json
 - Docs: https://github.com/teodorofodocrispin-cmyk/Intelica-docs
 - AGENTS.md: https://github.com/teodorofodocrispin-cmyk/Intelica-docs/blob/main/AGENTS.md
