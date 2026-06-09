@@ -1,0 +1,31 @@
+{
+  "name": "intelica",
+  "version": "1.0.0",
+  "description": "Competitive intelligence for autonomous AI agents. Analyze any URL or company and get structured JSON with market positioning, competitors, battlecard, and executable Market Score. Pay-per-call via x402 on Base and Solana.",
+  "author": "teodorofodocrispin-cmyk",
+  "homepage": "https://intelica.onrender.com",
+  "repository": "https://github.com/teodorofodocrispin-cmyk/Intelica-docs",
+  "skills": [
+    "./SKILL.md"
+  ],
+  "mcp": {
+    "servers": {
+      "intelica": {
+        "type": "url",
+        "url": "https://intelica.onrender.com/mcp"
+      }
+    }
+  },
+  "tags": [
+    "competitive-intelligence",
+    "market-research",
+    "x402",
+    "ai-agents",
+    "mcp"
+  ],
+  "categories": [
+    "research",
+    "finance",
+    "data"
+  ]
+}
