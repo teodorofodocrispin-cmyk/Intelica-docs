@@ -1,6 +1,6 @@
 ---
 name: intelica
-version: 4.6.0
+version: 4.5.1
 description: >
   Competitive intelligence API for autonomous AI agents. Analyzes any URL or
   company description and returns structured JSON with market positioning, pain points,
