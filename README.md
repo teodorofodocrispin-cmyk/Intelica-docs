@@ -9,7 +9,7 @@
 
 Analyze any URL or company description and get back structured JSON with market positioning, user pain points, detected competitors, unique angles, and an executable Market Score. Pay $0.05 USDC per call on Base or Solana mainnet. No accounts, no API keys, no subscriptions.
 
-**Live:** `https://intelica.onrender.com` · **Version:** v4.5.0
+**Live:** `https://api.intelica.dev` · **Version:** v4.5.0
 
 ---
 
@@ -32,12 +32,12 @@ Analyze any URL or company description and get back structured JSON with market 
 
 ```bash
 # 1. Without payment → returns 402 with payment instructions
-curl -X POST https://intelica.onrender.com/intel \
+curl -X POST https://api.intelica.dev/intel \
   -H "Content-Type: application/json" \
   -d '{"text": "Notion is an all-in-one workspace for teams"}'
 
 # 2. Free demo (300 char limit)
-curl -X POST https://intelica.onrender.com/demo \
+curl -X POST https://api.intelica.dev/demo \
   -H "Content-Type: application/json" \
   -d '{"text": "Notion is an all-in-one workspace for teams"}'
 ```
@@ -169,10 +169,10 @@ On repeated analyses of the same company, Intelica compares the current result w
 
 ```bash
 # Full graph
-curl https://intelica.onrender.com/graph
+curl https://api.intelica.dev/graph
 
 # Subgraph centered on a company
-curl "https://intelica.onrender.com/graph?company=Notion"
+curl "https://api.intelica.dev/graph?company=Notion"
 ```
 
 Returns nodes (companies), edges (competitive relationships), and `hub_competitors` — companies that appear most frequently as competitors across all analyses.
@@ -330,7 +330,7 @@ def analyze_competitor(url: str, mode: str = "competitive") -> dict:
     from x402.client import PaymentClient
     client = PaymentClient(wallet_private_key="your_evm_private_key")
     response = client.post(
-        "https://intelica.onrender.com/intel",
+        "https://api.intelica.dev/intel",
         json={"url": url, "mode": mode}
     )
     return response.json()
@@ -355,7 +355,7 @@ def intelica_analyze(text: str, mode: str = "competitive") -> str:
     from x402.client import PaymentClient
     client = PaymentClient(wallet_private_key="your_evm_private_key")
     response = client.post(
-        "https://intelica.onrender.com/intel",
+        "https://api.intelica.dev/intel",
         json={"text": text, "mode": mode}
     )
     return str(response.json()["analysis"])
@@ -369,7 +369,7 @@ intelica_tool = FunctionTool.from_defaults(fn=intelica_analyze)
 import httpx
 
 response = httpx.post(
-    "https://intelica.onrender.com/demo",
+    "https://api.intelica.dev/demo",
     json={"text": "Notion is an all-in-one workspace for notes and databases"}
 )
 print(response.json()["analysis"]["market_score"])
@@ -387,7 +387,7 @@ from x402.client import PaymentClient
 
 client = PaymentClient(wallet_private_key="your_evm_private_key")
 response = client.post(
-    "https://intelica.onrender.com/intel",
+    "https://api.intelica.dev/intel",
     json={"url": "https://competitor.com", "mode": "competitive"}
 )
 ```
