@@ -1,31 +1,19 @@
 {
   "name": "intelica",
+  "description": "Competitive intelligence for autonomous AI agents. Analyze any URL or company and get structured JSON with market positioning, competitors, battlecard, and executable Market Score. Pay-per-call via x402 on Base and Solana mainnet. 10 context modes: competitive, venture_screening, regulatory_compliance, crypto_protocol, sales_enablement, and more.",
   "version": "1.0.0",
-  "description": "Competitive intelligence for autonomous AI agents. Analyze any URL or company and get structured JSON with market positioning, competitors, battlecard, and executable Market Score. Pay-per-call via x402 on Base and Solana.",
-  "author": "teodorofodocrispin-cmyk",
+  "author": {
+    "name": "teodorofodocrispin-cmyk"
+  },
   "homepage": "https://intelica.onrender.com",
   "repository": "https://github.com/teodorofodocrispin-cmyk/Intelica-docs",
-  "skills": [
-    "./SKILL.md"
-  ],
-  "mcp": {
-    "servers": {
-      "intelica": {
-        "type": "url",
-        "url": "https://intelica.onrender.com/mcp"
-      }
-    }
-  },
+  "license": "MIT",
   "tags": [
     "competitive-intelligence",
     "market-research",
     "x402",
     "ai-agents",
-    "mcp"
-  ],
-  "categories": [
-    "research",
-    "finance",
-    "data"
+    "mcp",
+    "finance"
   ]
 }
