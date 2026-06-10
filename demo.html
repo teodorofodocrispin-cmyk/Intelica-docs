@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Intelica — Demo Simulation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0b14;--bg2:#0f1022;--surface:#12152a;--surface2:#181c35;
+  --border:#1e2340;--border2:#2a3060;
+  --text:#e8eaf0;--muted:#7880a0;--hint:#4a5270;
+  --accent:#7c6ef5;--accent2:#9d8fff;--pink:#c45afc;
+  --green:#3ecf8e;--amber:#f59e0b;--red:#ef4444;--orange:#f97316;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 50% -5%,rgba(124,110,245,0.18) 0%,transparent 60%),
+  radial-gradient(ellipse 40% 40% at 85% 85%,rgba(196,90,252,0.07) 0%,transparent 50%);
+  pointer-events:none;z-index:0}
+body>*{position:relative;z-index:1}
+
+/* Demo banner */
+.demo-banner{background:linear-gradient(135deg,rgba(249,115,22,0.15),rgba(245,158,11,0.1));border-bottom:1px solid rgba(249,115,22,0.3);padding:10px 24px;text-align:center;font-size:12px;color:var(--amber);font-family:var(--mono);letter-spacing:0.05em}
+.demo-banner strong{color:var(--orange)}
+
+/* Header */
+header{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:rgba(10,11,20,0.85);backdrop-filter:blur(12px)}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,#1a1a2e,#533483);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:15px;color:var(--accent2);border:1px solid rgba(124,110,245,0.3);box-shadow:0 0 10px rgba(124,110,245,0.2)}
+.logo-name{font-weight:600;font-size:16px;background:linear-gradient(90deg,#e8eaf0,#9d8fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.demo-tag{margin-left:auto;background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.3);color:var(--orange);font-family:var(--mono);font-size:10px;padding:4px 12px;border-radius:20px;letter-spacing:0.06em}
+
+/* Wrap */
+.wrap{max-width:720px;margin:0 auto;padding:32px 20px 80px}
+
+/* Step cards */
+.step-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;position:relative}
+.step-card.active{border-color:var(--accent);box-shadow:0 0 0 1px rgba(124,110,245,0.15)}
+.step-card.done{border-color:rgba(62,207,142,0.3);background:rgba(62,207,142,0.03)}
+.step-card.locked{opacity:0.4;pointer-events:none}
+.step-num{position:absolute;top:-12px;left:20px;background:var(--accent);color:white;font-family:var(--mono);font-size:11px;font-weight:500;padding:3px 12px;border-radius:20px;letter-spacing:0.05em}
+.step-num.done-num{background:var(--green)}
+.step-title{font-size:15px;font-weight:600;margin-bottom:4px}
+.step-sub{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+
+/* Demo credentials box */
+.cred-box{background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:16px;margin-bottom:16px}
+.cred-title{font-size:11px;color:var(--orange);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px}
+.cred-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px}
+.cred-row:last-child{margin-bottom:0}
+.cred-label{font-size:12px;color:var(--muted);flex-shrink:0}
+.cred-val{font-family:var(--mono);font-size:11px;color:var(--text);background:var(--bg2);padding:5px 10px;border-radius:7px;border:1px solid var(--border);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cred-copy{padding:5px 10px;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;color:var(--muted);font-size:11px;cursor:pointer;font-family:var(--sans);transition:all 0.15s;white-space:nowrap;flex-shrink:0}
+.cred-copy:hover{color:var(--text);border-color:var(--accent)}
+.cred-copy.cop{color:var(--green);border-color:var(--green)}
+
+/* Plan cards mini */
+.plans-mini{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.plan-mini{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.15s;user-select:none}
+.plan-mini:hover{border-color:var(--border2)}
+.plan-mini.sel{border-color:var(--accent);background:rgba(124,110,245,0.06)}
+.plan-mini-name{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
+.plan-mini-price{font-size:24px;font-weight:600;background:linear-gradient(135deg,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:4px}
+.plan-mini-sub{font-size:11px;color:var(--muted)}
+.plan-mini-sub strong{color:var(--green)}
+
+/* Simulated payment */
+.sim-payment{background:var(--bg2);border:1px dashed rgba(249,115,22,0.3);border-radius:12px;padding:16px;margin-bottom:14px}
+.sim-title{font-size:11px;color:var(--orange);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.sim-title::before{content:'⚡';font-size:12px}
+.wallet-addr{font-family:var(--mono);font-size:11px;color:var(--accent2);word-break:break-all;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px;line-height:1.6}
+.tx-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 13px;font-family:var(--mono);font-size:11px;color:var(--text);outline:none;transition:border-color 0.15s;margin-bottom:10px}
+.tx-input:focus{border-color:var(--accent)}
+
+/* Buttons */
+.btn{padding:12px 20px;border-radius:11px;border:none;font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;width:100%}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--pink));color:white;box-shadow:0 4px 16px rgba(124,110,245,0.3)}
+.btn.primary:hover{box-shadow:0 6px 24px rgba(124,110,245,0.45);transform:translateY(-1px)}
+.btn.primary:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.green{background:linear-gradient(135deg,#1a9e65,var(--green));color:white;box-shadow:0 4px 16px rgba(62,207,142,0.25)}
+.btn.green:hover{box-shadow:0 6px 24px rgba(62,207,142,0.4);transform:translateY(-1px)}
+.btn.outline{background:transparent;color:var(--text);border:1px solid var(--border2)}
+.btn.outline:hover{border-color:var(--accent);color:var(--accent2)}
+
+/* Session activated */
+.activated-box{display:none;background:rgba(62,207,142,0.06);border:1px solid rgba(62,207,142,0.25);border-radius:12px;padding:16px;margin-top:14px}
+.activated-box.show{display:block}
+.act-lbl{font-size:11px;color:var(--green);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.act-key{font-family:var(--mono);font-size:12px;color:var(--text);word-break:break-all;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px}
+.act-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.act-pill{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;text-align:center}
+.act-pill-val{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--accent2);line-height:1;margin-bottom:2px}
+.act-pill-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+
+/* Generator */
+.co-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;font-family:var(--sans);font-size:15px;color:var(--text);outline:none;transition:border-color 0.2s;resize:none;min-height:72px;margin-bottom:14px}
+.co-input:focus{border-color:var(--accent)}
+.co-input::placeholder{color:var(--hint)}
+
+.modes-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+@media(min-width:480px){.modes-grid{grid-template-columns:repeat(3,1fr)}}
+.mode-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;cursor:pointer;transition:all 0.15s;user-select:none}
+.mode-card:hover{border-color:var(--border2)}
+.mode-card.sel{border-color:var(--accent);background:rgba(124,110,245,0.07)}
+.mode-nm{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px}
+.mode-ds{font-size:10px;color:var(--muted);line-height:1.4}
+.mode-pr{font-family:var(--mono);font-size:10px;margin-top:5px;padding:2px 7px;border-radius:8px;display:inline-block;background:rgba(62,207,142,0.1);color:var(--green)}
+
+.fmt-row{display:flex;gap:8px;margin-bottom:14px}
+.fmt-btn{flex:1;padding:9px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:var(--sans);font-size:12px;cursor:pointer;transition:all 0.15s;text-align:center}
+.fmt-btn.sel{border-color:var(--accent);color:var(--accent2);background:rgba(124,110,245,0.07)}
+
+/* Loading */
+.loading{display:none;text-align:center;padding:40px 24px}
+.loading.show{display:block}
+.spinner{width:36px;height:36px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{color:var(--muted);font-size:13px;font-family:var(--mono)}
+.lsteps{margin-top:12px}
+.lstep{font-size:11px;color:var(--hint);font-family:var(--mono);opacity:0;animation:fin 0.4s forwards}
+@keyframes fin{to{opacity:1}}
+
+/* Result */
+.result{display:none}
+.result.show{display:block}
+.result-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.result-title{font-size:15px;font-weight:600}
+.result-acts{display:flex;gap:8px}
+.act-btn{padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--sans);transition:all 0.15s;border:1px solid var(--border2);background:transparent;color:var(--text)}
+.act-btn:hover{border-color:var(--accent);color:var(--accent2)}
+.act-btn.primary{background:var(--accent);border-color:var(--accent);color:white}
+.report-frame{width:100%;border:1px solid var(--border);border-radius:12px;min-height:500px;background:white}
+.json-out{background:var(--bg2);color:var(--accent2);padding:20px;border-radius:12px;font-size:11px;font-family:var(--mono);line-height:1.7;overflow:auto;max-height:500px;border:1px solid var(--border);display:none}
+
+.err-box{display:none;background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:16px;margin-top:12px}
+.err-box.show{display:block}
+.err-title{font-size:13px;font-weight:500;color:var(--red);margin-bottom:5px}
+.err-msg{font-size:12px;color:var(--muted)}
+
+/* Status bar */
+.status-bar{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:11px}
+.status-bar.hidden{display:none}
+.sb-left{color:var(--muted)}
+.sb-right{display:flex;gap:16px}
+.sb-stat{text-align:right}
+.sb-val{color:var(--accent2);font-weight:500}
+.sb-lbl{color:var(--hint);font-size:10px}
+
+footer{border-top:1px solid var(--border);padding:20px;text-align:center;font-size:11px;color:var(--hint)}
+footer a{color:var(--accent2);text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  ⚡ <strong>DEMO MODE</strong> — Simulation with test credentials. No real payment required. For internal use only.
+</div>
+
+<header>
+  <div class="logo-wrap">
+    <div class="logo-mark">I</div>
+    <span class="logo-name">Intelica</span>
+  </div>
+  <span class="demo-tag">DEMO SIMULATION</span>
+</header>
+
+<div class="wrap">
+
+  <!-- STEP 1 — Choose plan -->
+  <div class="step-card active" id="step1">
+    <div class="step-num" id="step1num">Step 1</div>
+    <div class="step-title">Choose your access plan</div>
+    <div class="step-sub">In the real experience, you pay USDC on Solana. Here we simulate the entire flow.</div>
+
+    <div class="plans-mini">
+      <div class="plan-mini sel" id="planStarter" onclick="selPlan('starter')">
+        <div class="plan-mini-name">Starter</div>
+        <div class="plan-mini-price">15 <span style="font-size:14px;color:var(--muted)">USDC</span></div>
+        <div class="plan-mini-sub">30 reports · 10 days · <strong>$0.50/report</strong></div>
+      </div>
+      <div class="plan-mini" id="planPro" onclick="selPlan('pro')">
+        <div class="plan-mini-name">Pro ⭐</div>
+        <div class="plan-mini-price">30 <span style="font-size:14px;color:var(--muted)">USDC</span></div>
+        <div class="plan-mini-sub">100 reports · 30 days · <strong>$0.30/report</strong></div>
+      </div>
+    </div>
+
+    <button class="btn primary" onclick="goStep2()">Continue to payment simulation →</button>
+  </div>
+
+  <!-- STEP 2 — Simulated payment -->
+  <div class="step-card locked" id="step2">
+    <div class="step-num" id="step2num">Step 2</div>
+    <div class="step-title">Payment simulation</div>
+    <div class="step-sub">In real use, you send USDC to this Solana address and paste the transaction hash.</div>
+
+    <div class="cred-box">
+      <div class="cred-title">🧪 Demo credentials — use these</div>
+      <div class="cred-row">
+        <span class="cred-label">Wallet address</span>
+        <span class="cred-val" id="demoWallet">45q8KyCAGSHHd6qYP2ZkEJh22SzeQeXRfyFsENcx3KN6</span>
+        <button class="cred-copy" onclick="copyDemo('demoWallet',this)">Copy</button>
+      </div>
+      <div class="cred-row">
+        <span class="cred-label">Demo tx hash</span>
+        <span class="cred-val" id="demoTx">DEMO-TX-HASH-NOT-REAL</span>
+        <button class="cred-copy" onclick="copyDemo('demoTx',this)">Copy</button>
+      </div>
+    </div>
+
+    <div class="sim-payment">
+      <div class="sim-title">Simulated payment flow</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">
+        In real use: open your Solana wallet → send <strong id="simAmount" style="color:var(--text)">15 USDC</strong> → paste the tx hash below
+      </div>
+      <div class="wallet-addr">45q8KyCAGSHHd6qYP2ZkEJh22SzeQeXRfyFsENcx3KN6</div>
+      <input type="text" class="tx-input" id="txInput" placeholder="Paste demo tx hash: DEMO-TX-HASH-NOT-REAL" oninput="checkTx()">
+    </div>
+
+    <button class="btn primary" id="activateBtn" disabled onclick="activatePlan()">
+      Confirm & activate plan
+    </button>
+
+    <div class="activated-box" id="activatedBox">
+      <div class="act-lbl">✓ Plan activated</div>
+      <div class="act-key" id="actKey">—</div>
+      <div class="act-meta">
+        <div class="act-pill"><div class="act-pill-val" id="actReports">—</div><div class="act-pill-lbl">Reports</div></div>
+        <div class="act-pill"><div class="act-pill-val" id="actDays">—</div><div class="act-pill-lbl">Days</div></div>
+        <div class="act-pill"><div class="act-pill-val" id="actPlan">—</div><div class="act-pill-lbl">Plan</div></div>
+      </div>
+      <button class="btn green" onclick="goStep3()">Generate my first report →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 — Generate reports -->
+  <div class="step-card locked" id="step3">
+    <div class="step-num" id="step3num">Step 3</div>
+    <div class="step-title">Generate competitive intelligence</div>
+    <div class="step-sub">Your plan is active. Generate real reports — this calls the live Intelica API.</div>
+
+    <div class="status-bar hidden" id="statusBar">
+      <span class="sb-left" id="sbPlan">Pro plan</span>
+      <div class="sb-right">
+        <div class="sb-stat"><div class="sb-val" id="sbReports">—</div><div class="sb-lbl">Reports left</div></div>
+        <div class="sb-stat"><div class="sb-val" id="sbDays">—</div><div class="sb-lbl">Days left</div></div>
+      </div>
+    </div>
+
+    <textarea class="co-input" id="coIn" oninput="onInput()" maxlength="500"
+      placeholder="Company name, URL, or description&#10;e.g. &quot;Notion&quot;  ·  &quot;https://linear.app&quot;  ·  &quot;Kimono bag brand for international expansion&quot;"></textarea>
+
+    <div class="modes-grid">
+      <div class="mode-card sel" data-mode="competitive" onclick="selMode(this)">
+        <div class="mode-nm">Understand a competitor</div>
+        <div class="mode-ds">Positioning, moat, what to counter</div>
+        <span class="mode-pr">Included</span>
+      </div>
+      <div class="mode-card" data-mode="market_entry" onclick="selMode(this)">
+        <div class="mode-nm">Evaluate a new market</div>
+        <div class="mode-ds">Gaps, barriers, saturation</div>
+        <span class="mode-pr">Included</span>
+      </div>
+      <div class="mode-card" data-mode="fundraising" onclick="selMode(this)">
+        <div class="mode-nm">Investor narrative</div>
+        <div class="mode-ds">TAM, traction, challenges</div>
+        <span class="mode-pr">Included</span>
+      </div>
+      <div class="mode-card" data-mode="sales_enablement" onclick="selMode(this)">
+        <div class="mode-nm">Sales battlecard</div>
+        <div class="mode-ds">Weakness, angle, objections</div>
+        <span class="mode-pr">Included</span>
+      </div>
+      <div class="mode-card" data-mode="market_entry" onclick="selMode(this)">
+        <div class="mode-nm">Regulatory risk</div>
+        <div class="mode-ds">EU AI Act, GDPR, HIPAA</div>
+        <span class="mode-pr">Included</span>
+      </div>
+      <div class="mode-card" data-mode="crypto_protocol" onclick="selMode(this)">
+        <div class="mode-nm">DeFi protocol</div>
+        <div class="mode-ds">Tokenomics, TVL, risk</div>
+        <span class="mode-pr">Included</span>
+      </div>
+    </div>
+
+    <div class="fmt-row">
+      <button class="fmt-btn sel" data-fmt="report" onclick="selFmt(this)">📄 Visual report</button>
+      <button class="fmt-btn" data-fmt="json" onclick="selFmt(this)">{ } Raw JSON</button>
+    </div>
+
+    <button class="btn primary" id="genBtn" disabled onclick="generate()">Generate report</button>
+
+    <div class="loading" id="loadingEl">
+      <div class="spinner"></div>
+      <div class="loading-msg">Analyzing with Intelica…</div>
+      <div class="lsteps" id="lsteps"></div>
+    </div>
+
+    <div class="err-box" id="errBox">
+      <div class="err-title" id="errTitle">Error</div>
+      <div class="err-msg" id="errMsg"></div>
+    </div>
+
+    <div class="result" id="resultEl">
+      <div style="margin-top:16px">
+        <div class="result-hdr">
+          <div class="result-title" id="resultTitle">Report ready</div>
+          <div class="result-acts">
+            <button class="act-btn" onclick="resetGen()">New report</button>
+            <button class="act-btn primary" onclick="dlReport()">Download</button>
+          </div>
+        </div>
+        <iframe class="report-frame" id="rFrame" title="Report" style="display:none"></iframe>
+        <pre class="json-out" id="jsonOut"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 — Check status -->
+  <div class="step-card locked" id="step4">
+    <div class="step-num" id="step4num">Step 4</div>
+    <div class="step-title">Check your plan status anytime</div>
+    <div class="step-sub">In real use, your session key lets you check reports remaining and expiry at any time.</div>
+
+    <div class="cred-box">
+      <div class="cred-title">🧪 Your demo session key</div>
+      <div class="cred-row">
+        <span class="cred-label">Session key</span>
+        <span class="cred-val" id="step4Key">—</span>
+        <button class="cred-copy" onclick="copyDemo('step4Key',this)">Copy</button>
+      </div>
+      <div class="cred-row">
+        <span class="cred-label">Status URL</span>
+        <span class="cred-val" id="step4Url">—</span>
+        <button class="cred-copy" onclick="copyDemo('step4Url',this)">Copy</button>
+      </div>
+    </div>
+
+    <button class="btn outline" onclick="checkStatus()">Check plan status →</button>
+
+    <div id="statusResult" style="display:none;margin-top:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px">
+      <pre id="statusJson" style="font-family:var(--mono);font-size:11px;color:var(--accent2);line-height:1.7;overflow:auto"></pre>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <a href="https://teodorofodocrispin-cmyk.github.io/Intelica-docs/intelica.html">← Back to main page</a> ·
+  <a href="https://api.intelica.dev">api.intelica.dev</a> ·
+  Demo — internal use only
+</footer>
+
+<script>
+const API = 'https://api.intelica.dev';
+const DEMO_SESSION = 'DEMO-SESSION-INTELICA-2026';
+const STEPS = ['Searching verified sources…','Extracting market signals…','Analyzing position…','Building market score…','Preparing report…'];
+const PLANS = {
+  starter:{name:'Starter',reports:30,days:10,price:15,amount:'15 USDC'},
+  pro:{name:'Pro',reports:100,days:30,price:30,amount:'30 USDC'}
+};
+
+let selectedPlan = 'starter';
+let activeSession = null;
+let sessionInfo = null;
+let mode = 'competitive';
+let fmt = 'report';
+let lastHtml = null, lastJson = null;
+
+function selPlan(p) {
+  selectedPlan = p;
+  document.getElementById('planStarter').classList.toggle('sel', p==='starter');
+  document.getElementById('planPro').classList.toggle('sel', p==='pro');
+  document.getElementById('simAmount').textContent = PLANS[p].amount;
+}
+
+function goStep2() {
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step1').classList.add('done');
+  document.getElementById('step1num').textContent = '✓ 1';
+  document.getElementById('step1num').classList.add('done-num');
+  document.getElementById('step2').classList.remove('locked');
+  document.getElementById('step2').classList.add('active');
+  document.getElementById('step2').scrollIntoView({behavior:'smooth'});
+}
+
+function checkTx() {
+  const val = document.getElementById('txInput').value.trim();
+  document.getElementById('activateBtn').disabled = val.length < 5;
+}
+
+async function activatePlan() {
+  const tx = document.getElementById('txInput').value.trim();
+  const btn = document.getElementById('activateBtn');
+  btn.disabled = true;
+  btn.textContent = 'Activating…';
+
+  // Use demo session directly
+  activeSession = DEMO_SESSION;
+
+  try {
+    const r = await fetch(`${API}/access/status?session=${DEMO_SESSION}`);
+    const d = await r.json();
+
+    if (r.ok && d.status === 'active') {
+      sessionInfo = d;
+      document.getElementById('actKey').textContent = DEMO_SESSION;
+      document.getElementById('actReports').textContent = d.reports_remaining;
+      const days = Math.max(0, Math.ceil((new Date(d.expires_at)-new Date())/86400000));
+      document.getElementById('actDays').textContent = days;
+      document.getElementById('actPlan').textContent = d.plan.toUpperCase();
+      document.getElementById('activatedBox').classList.add('show');
+      btn.textContent = '✓ Plan activated';
+      btn.style.background = '#3ecf8e';
+      document.getElementById('step4Key').textContent = DEMO_SESSION;
+      document.getElementById('step4Url').textContent = `${API}/access/status?session=${DEMO_SESSION}`;
+    } else {
+      btn.textContent = 'Error — try again';
+      btn.style.background = '#ef4444';
+      setTimeout(()=>{btn.textContent='Confirm & activate plan';btn.style.background='';btn.disabled=false;},3000);
+    }
+  } catch(e) {
+    btn.textContent = 'Network error';
+    setTimeout(()=>{btn.textContent='Confirm & activate plan';btn.style.background='';btn.disabled=false;},2000);
+  }
+}
+
+function goStep3() {
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('step2').classList.add('done');
+  document.getElementById('step2num').textContent = '✓ 2';
+  document.getElementById('step2num').classList.add('done-num');
+  document.getElementById('step3').classList.remove('locked');
+  document.getElementById('step3').classList.add('active');
+  document.getElementById('step4').classList.remove('locked');
+
+  // Show status bar
+  document.getElementById('statusBar').classList.remove('hidden');
+  document.getElementById('sbPlan').textContent = sessionInfo.plan + ' plan';
+  document.getElementById('sbReports').textContent = sessionInfo.reports_remaining;
+  const days = Math.max(0, Math.ceil((new Date(sessionInfo.expires_at)-new Date())/86400000));
+  document.getElementById('sbDays').textContent = days;
+
+  document.getElementById('step3').scrollIntoView({behavior:'smooth'});
+}
+
+function onInput() {
+  const v = document.getElementById('coIn').value.trim();
+  document.getElementById('genBtn').disabled = v.length < 3;
+}
+
+function selMode(c) {
+  document.querySelectorAll('.mode-card').forEach(x=>x.classList.remove('sel'));
+  c.classList.add('sel');
+  mode = c.dataset.mode;
+}
+
+function selFmt(b) {
+  document.querySelectorAll('.fmt-btn').forEach(x=>x.classList.remove('sel'));
+  b.classList.add('sel');
+  fmt = b.dataset.fmt;
+}
+
+async function generate() {
+  const input = document.getElementById('coIn').value.trim();
+  if (!input || !activeSession) return;
+
+  showLoad();
+  try {
+    const body = {mode, format: fmt};
+    if (input.startsWith('http')) body.url = input; else body.text = input;
+
+    const r = await fetch(`${API}/intel`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','X-SESSION': activeSession},
+      body: JSON.stringify(body)
+    });
+
+    if (r.ok) {
+      if (fmt === 'report') showResult(await r.text(), null, input);
+      else showResult(null, await r.json(), input);
+      if (sessionInfo) {
+        sessionInfo.reports_remaining--;
+        document.getElementById('sbReports').textContent = sessionInfo.reports_remaining;
+      }
+    } else {
+      const err = await r.json().catch(()=>({}));
+      document.getElementById('loadingEl').classList.remove('show');
+      document.getElementById('errBox').classList.add('show');
+      document.getElementById('errTitle').textContent = err.error || 'Error';
+      document.getElementById('errMsg').textContent = err.message || err.detail || 'Something went wrong.';
+    }
+  } catch(e) {
+    document.getElementById('loadingEl').classList.remove('show');
+    document.getElementById('errBox').classList.add('show');
+    document.getElementById('errTitle').textContent = 'Network error';
+    document.getElementById('errMsg').textContent = 'Could not connect to Intelica.';
+  }
+}
+
+function showLoad() {
+  document.getElementById('loadingEl').classList.add('show');
+  document.getElementById('resultEl').classList.remove('show');
+  document.getElementById('errBox').classList.remove('show');
+  document.getElementById('genBtn').disabled = true;
+  const s = document.getElementById('lsteps'); s.innerHTML = '';
+  STEPS.forEach((msg,i)=>{const el=document.createElement('div');el.className='lstep';el.textContent=msg;el.style.animationDelay=(i*1.2)+'s';s.appendChild(el);});
+}
+
+function showResult(html, json, co) {
+  document.getElementById('loadingEl').classList.remove('show');
+  document.getElementById('resultEl').classList.add('show');
+  document.getElementById('resultTitle').textContent = 'Report: ' + co.substring(0,40);
+  lastHtml = html; lastJson = json;
+  if (html) {
+    document.getElementById('rFrame').srcdoc = html;
+    document.getElementById('rFrame').style.display = 'block';
+    document.getElementById('jsonOut').style.display = 'none';
+  } else {
+    document.getElementById('jsonOut').textContent = JSON.stringify(json, null, 2);
+    document.getElementById('jsonOut').style.display = 'block';
+    document.getElementById('rFrame').style.display = 'none';
+  }
+  document.getElementById('resultEl').scrollIntoView({behavior:'smooth'});
+  document.getElementById('genBtn').disabled = false;
+
+  // Unlock step 4
+  document.getElementById('step3num').textContent = '✓ 3';
+  document.getElementById('step3num').classList.add('done-num');
+  document.getElementById('step4').classList.remove('locked');
+  document.getElementById('step4').classList.add('active');
+}
+
+function resetGen() {
+  document.getElementById('resultEl').classList.remove('show');
+  document.getElementById('errBox').classList.remove('show');
+  document.getElementById('loadingEl').classList.remove('show');
+  document.getElementById('genBtn').disabled = document.getElementById('coIn').value.trim().length < 3;
+  lastHtml = null; lastJson = null;
+}
+
+function dlReport() {
+  if (lastHtml) { const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lastHtml],{type:'text/html'}));a.download='intelica-report.html';a.click(); }
+  else if (lastJson) { const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(lastJson,null,2)],{type:'application/json'}));a.download='intelica-report.json';a.click(); }
+}
+
+async function checkStatus() {
+  const r = await fetch(`${API}/access/status?session=${DEMO_SESSION}`);
+  const d = await r.json();
+  document.getElementById('statusJson').textContent = JSON.stringify(d, null, 2);
+  document.getElementById('statusResult').style.display = 'block';
+  document.getElementById('statusResult').scrollIntoView({behavior:'smooth'});
+}
+
+function copyDemo(id, btn) {
+  const text = document.getElementById(id).textContent.trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent = '✓ Copied'; btn.classList.add('cop');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('cop');}, 2000);
+  });
+}
+</script>
+</body>
+</html>
