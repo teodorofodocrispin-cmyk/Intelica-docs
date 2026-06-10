@@ -131,7 +131,7 @@ header{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;alig
 .mode-ds{font-size:11px;color:var(--muted);line-height:1.4}
 .mode-pr{font-family:var(--mono);font-size:10px;margin-top:6px;padding:2px 7px;border-radius:8px;display:inline-block}
 .std{background:rgba(62,207,142,0.1);color:var(--green)}
-.elite{background:rgba(124,110,245,0.1);color:var(--accent2)}
+.elite{background:rgba(124,110,245,0.1);color:var(--accent2)}.inc{background:rgba(62,207,142,0.1);color:var(--green)}
 
 /* Format */
 .fmt-row{display:flex;gap:8px}
@@ -542,6 +542,20 @@ function updateNote(){
   const pr=fmt==='report'&&parseFloat(price)<1?(parseFloat(price)+0.45).toFixed(2):price;
   document.getElementById('priceNote').textContent=`Pay ${pr} USDC on Solana · no account needed`;
 }
+function updateModePrices(){
+  const hasPlan = sessionKey && sessionData && sessionData.reports_remaining > 0;
+  document.querySelectorAll('.mode-pr').forEach(el=>{
+    if(hasPlan){
+      el.textContent='Included';
+      el.className='mode-pr inc';
+    }else{
+      const card=el.closest('.mode-card');
+      const p=card?card.dataset.price:'0.05';
+      el.textContent='$'+p;
+      el.className='mode-pr '+(parseFloat(p)>=1?'elite':'std');
+    }
+  });
+}
 function selMode(c){document.querySelectorAll('.mode-card').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');mode=c.dataset.mode;price=c.dataset.price;updateNote();}
 function selFmt(b){document.querySelectorAll('.fmt-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');fmt=b.dataset.fmt;updateNote();}
 
@@ -563,6 +577,7 @@ async function applySession(){
       document.getElementById('pillD').textContent=days;
       document.getElementById('pillP').textContent=d.plan;
       updateNote();
+      updateModePrices();
     }else{
       const m={expired:'Plan expired — buy a new plan above.',exhausted:'Reports used up — buy a new plan above.'};
       st.textContent=m[d.status]||'Session key not found. Check and try again.';
@@ -653,6 +668,7 @@ async function confirmPay(){
         document.getElementById('pillD').textContent=d.duration_days;
         document.getElementById('pillP').textContent=d.plan;
         updateNote();
+        updateModePrices();
       }else showModalErr(btn,d.detail||'Could not verify payment');
     }catch(e){showModalErr(btn,'Network error — try again');}
   }
