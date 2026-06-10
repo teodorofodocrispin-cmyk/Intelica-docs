@@ -477,33 +477,40 @@ footer a:hover{text-decoration:underline}
       <div class="pay-row"><span class="l" style="font-weight:600">Total</span><span class="v g" id="sumTotal">—</span></div>
     </div>
 
-    <div class="wallet-box">
-      <div class="wallet-lbl">Send exactly to this Solana address</div>
-      <div class="wallet-addr">45q8KyCAGSHHd6qYP2ZkEJh22SzeQeXRfyFsENcx3KN6</div>
-      <button class="copy-btn" id="copyBtn" onclick="copyAddr()">Copy address</button>
+    <!-- Step A: Send payment -->
+    <div id="payStepA">
+      <div class="wallet-box">
+        <div class="wallet-lbl">Send exactly <strong id="sendAmount" style="color:var(--green)">— USDC</strong> to this Solana address</div>
+        <div class="wallet-addr">45q8KyCAGSHHd6qYP2ZkEJh22SzeQeXRfyFsENcx3KN6</div>
+        <button class="copy-btn" id="copyBtn" onclick="copyAddr()">Copy address</button>
+      </div>
+      <div class="net-badge"><div class="net-dot"></div>Solana mainnet · USDC · EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v</div>
+      <button class="confirm-btn" id="paidBtn" onclick="startPolling()" style="margin-bottom:10px">
+        I've sent the payment — activate my plan
+      </button>
+      <div class="modal-note">
+        Send exactly the amount shown · Payment is final on-chain<br>
+        No account needed · No subscription · No tx hash required
+      </div>
     </div>
 
-    <div class="net-badge"><div class="net-dot"></div>Solana mainnet · USDC</div>
+    <!-- Step B: Polling -->
+    <div id="payStepB" style="display:none;text-align:center;padding:12px 0">
+      <div style="width:36px;height:36px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px"></div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:6px">Waiting for payment confirmation</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Intelica is monitoring the Solana network automatically.<br>This usually takes under 30 seconds.</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--hint)" id="pollingStatus">Checking Solana...</div>
+    </div>
 
-    <label class="tx-lbl">Paste your transaction hash after paying</label>
-    <input type="text" id="txIn" class="tx-in" placeholder="e.g. 4xK7mN2pQ8rVcZoL..." oninput="checkTx()">
-
-    <button class="confirm-btn" id="confirmBtn" disabled onclick="confirmPay()">Confirm</button>
-
-    <!-- Session activated -->
+    <!-- Step C: Confirmed -->
     <div class="act-box" id="actBox">
-      <div class="act-lbl">✓ Plan activated</div>
+      <div class="act-lbl">✓ Payment confirmed — plan activated</div>
       <div class="act-key" id="actKey">—</div>
       <div class="act-info">
         Save this key. Enter it in the session field to use your plan.<br>
-        Check usage anytime: <strong>GET /access/status?session=KEY</strong>
+        Check usage: <strong>GET /access/status?session=KEY</strong>
       </div>
-      <button class="act-use-btn" onclick="useSession()">Use this plan now ↓</button>
-    </div>
-
-    <div class="modal-note">
-      Payment is final on-chain · No account needed · No subscription<br>
-      Try the <a href="https://api.intelica.dev/demo">free demo</a> before paying
+      <button class="act-use-btn" onclick="useSession()">Start generating reports ↓</button>
     </div>
   </div>
 </div>
@@ -607,6 +614,9 @@ function openReportModal(){
   resetModal();
 }
 
+let pollingInterval = null;
+let currentPaymentId = null;
+
 function openPlanModal(plan){
   modalType='plan';currentPlan=plan;
   const pl=PLANS[plan];
@@ -616,62 +626,96 @@ function openPlanModal(plan){
   document.getElementById('sumLbl2').textContent='Valid for';
   document.getElementById('sumVal2').textContent=`${pl.days} days`;
   document.getElementById('sumTotal').textContent=`${pl.price} USDC`;
-  document.getElementById('confirmBtn').textContent=`Confirm & activate ${pl.name}`;
+  document.getElementById('sendAmount').textContent=`${pl.price} USDC`;
   resetModal();
+  // Crear pending payment inmediatamente
+  createPendingPayment(plan);
+}
+
+async function createPendingPayment(plan){
+  try{
+    const r = await fetch(`${API}/access/pending`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({plan})
+    });
+    const d = await r.json();
+    if(r.ok && d.payment_id){
+      currentPaymentId = d.payment_id;
+      console.log('Pending payment created:', d.payment_id);
+    }
+  }catch(e){ console.log('Could not create pending payment:', e); }
+}
+
+async function startPolling(){
+  if(!currentPaymentId){ closeModal(); return; }
+  document.getElementById('payStepA').style.display='none';
+  document.getElementById('payStepB').style.display='block';
+  document.getElementById('actBox').classList.remove('show');
+
+  let attempts = 0;
+  const maxAttempts = 72; // 6 minutes max
+
+  pollingInterval = setInterval(async ()=>{
+    attempts++;
+    document.getElementById('pollingStatus').textContent = `Checking Solana... (${attempts * 5}s)`;
+
+    try{
+      const r = await fetch(`${API}/access/pending/${currentPaymentId}`);
+      const d = await r.json();
+
+      if(d.status === 'confirmed' && d.session_id){
+        clearInterval(pollingInterval);
+        // Payment confirmed!
+        document.getElementById('payStepB').style.display='none';
+        document.getElementById('actKey').textContent = d.session_id;
+        document.getElementById('actBox').classList.add('show');
+        // Auto-load session
+        sessionKey = d.session_id;
+        sessionData = {
+          reports_remaining: d.reports_remaining,
+          expires_at: d.expires_at,
+          plan: d.plan,
+          status:'active'
+        };
+        document.getElementById('sessionIn').value = d.session_id;
+        document.getElementById('sessionSt').textContent = `✓ ${d.reports_remaining} reports · ${d.duration_days} days`;
+        document.getElementById('sessionSt').className='session-st ok';
+        document.getElementById('pillsRow').classList.add('show');
+        document.getElementById('pillR').textContent = d.reports_remaining;
+        document.getElementById('pillD').textContent = d.duration_days;
+        document.getElementById('pillP').textContent = d.plan;
+        updateNote();
+        updateModePrices();
+      } else if(d.status === 'expired' || attempts >= maxAttempts){
+        clearInterval(pollingInterval);
+        document.getElementById('payStepB').style.display='none';
+        document.getElementById('payStepA').style.display='block';
+        document.getElementById('pollingStatus').textContent = 'Payment not detected. Try again.';
+      }
+    }catch(e){ console.log('Polling error:', e); }
+  }, 5000);
 }
 
 function resetModal(){
-  document.getElementById('txIn').value='';
-  document.getElementById('confirmBtn').disabled=true;
-  document.getElementById('confirmBtn').style.background='';
+  if(pollingInterval){ clearInterval(pollingInterval); pollingInterval=null; }
+  currentPaymentId=null;
+  document.getElementById('payStepA').style.display='block';
+  document.getElementById('payStepB').style.display='none';
   document.getElementById('actBox').classList.remove('show');
   document.getElementById('copyBtn').textContent='Copy address';
   document.getElementById('copyBtn').classList.remove('cop');
   document.getElementById('payModal').classList.add('show');
 }
-function closeModal(){document.getElementById('payModal').classList.remove('show');}
+function closeModal(){
+  if(pollingInterval){ clearInterval(pollingInterval); pollingInterval=null; }
+  document.getElementById('payModal').classList.remove('show');
+}
 function copyAddr(){
   navigator.clipboard.writeText(SOL).then(()=>{
     const b=document.getElementById('copyBtn');b.textContent='✓ Copied';b.classList.add('cop');
     setTimeout(()=>{b.textContent='Copy address';b.classList.remove('cop');},2000);
   });
-}
-function checkTx(){document.getElementById('confirmBtn').disabled=document.getElementById('txIn').value.trim().length<20;}
-
-async function confirmPay(){
-  const tx=document.getElementById('txIn').value.trim();
-  const btn=document.getElementById('confirmBtn');
-  btn.disabled=true;btn.textContent='Verifying on Solana…';
-  if(modalType==='report'){
-    try{
-      const r=await fetch(`${API}/access/verify-tx`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tx_hash:tx,mode,format:fmt})});
-      const d=await r.json();
-      if(r.ok&&d.valid){closeModal();await fetchReport(null,tx);}
-      else showModalErr(btn,d.detail||'Could not verify — check tx hash and try again');
-    }catch(e){showModalErr(btn,'Network error — try again');}
-  }else{
-    try{
-      const r=await fetch(`${API}/access/activate`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:currentPlan,tx_hash:tx})});
-      const d=await r.json();
-      if(r.ok&&d.session_id){
-        document.getElementById('actKey').textContent=d.session_id;
-        document.getElementById('actBox').classList.add('show');
-        btn.textContent='✓ Plan activated';btn.style.background='#3ecf8e';
-        // Auto apply session
-        sessionKey=d.session_id;
-        sessionData={reports_remaining:d.reports_total,expires_at:new Date(Date.now()+d.duration_days*86400000).toISOString(),plan:currentPlan,status:'active'};
-        document.getElementById('sessionIn').value=d.session_id;
-        document.getElementById('sessionSt').textContent=`✓ ${d.reports_total} reports · ${d.duration_days} days`;
-        document.getElementById('sessionSt').className='session-st ok';
-        document.getElementById('pillsRow').classList.add('show');
-        document.getElementById('pillR').textContent=d.reports_total;
-        document.getElementById('pillD').textContent=d.duration_days;
-        document.getElementById('pillP').textContent=d.plan;
-        updateNote();
-        updateModePrices();
-      }else showModalErr(btn,d.detail||'Could not verify payment');
-    }catch(e){showModalErr(btn,'Network error — try again');}
-  }
 }
 
 function showModalErr(btn,msg){
