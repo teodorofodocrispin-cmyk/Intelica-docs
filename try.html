@@ -144,7 +144,7 @@ footer a{color:var(--accent2);text-decoration:none}
   <!-- Input -->
   <div class="input-card">
     <div class="input-label">What company do you want to analyze?</div>
-    <textarea class="co-input" id="coIn" oninput="onInput()" maxlength="300"
+    <textarea class="co-input" id="coIn" maxlength="300"
       placeholder="e.g. Notion, Stripe, Linear, Figma, Uniswap..."></textarea>
     <div class="char-count"><span id="charCount">0</span> / 300</div>
     <div class="examples">
@@ -260,10 +260,19 @@ function onInput(){
 }
 
 function setExample(text){
-  document.getElementById('coIn').value = text;
-  onInput();
-  document.getElementById('coIn').focus();
+  const el = document.getElementById('coIn');
+  el.value = text;
+  el.dispatchEvent(new Event('input'));
+  el.focus();
 }
+
+// Attach events after DOM ready
+document.addEventListener('DOMContentLoaded', function(){
+  const el = document.getElementById('coIn');
+  el.addEventListener('input', onInput);
+  el.addEventListener('keyup', onInput);
+  el.addEventListener('paste', function(){ setTimeout(onInput, 10); });
+});
 
 async function runDemo(){
   const text = document.getElementById('coIn').value.trim();
