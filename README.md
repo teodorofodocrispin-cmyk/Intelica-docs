@@ -422,16 +422,17 @@ For founders, consultants, and investors who need competitive intelligence witho
 | Starter | 30 | 10 | $15 USDC |
 | Pro | 100 | 30 | $30 USDC |
 
-**How it works:**
-1. Go to the [Access Plans page](https://teodorofodocrispin-cmyk.github.io/Intelica-docs/access.html)
-2. Choose a plan and pay in USDC on Solana
-3. Receive your session key instantly after payment confirms
-4. Go to the [Report Generator](https://teodorofodocrispin-cmyk.github.io/Intelica-docs/report.html)
-5. Enter your session key and generate reports until your plan expires
+**One page, complete experience:**
 
-**Links:**
-- 🛒 [Buy access](https://teodorofodocrispin-cmyk.github.io/Intelica-docs/access.html) — Starter $15 / Pro $30 USDC
-- 📊 [Generate report](https://teodorofodocrispin-cmyk.github.io/Intelica-docs/report.html) — Visual reports for founders
+👉 **[intelica.dev/intelica.html](https://teodorofodocrispin-cmyk.github.io/Intelica-docs/intelica.html)**
+
+The page guides you through everything in one scroll:
+1. See the plans and clear rules — exactly what you're buying
+2. Pay in USDC on Solana — session key activated instantly
+3. Enter your session key — generate reports immediately
+4. Download your report as HTML or JSON
+
+**Additional links:**
 - 🔍 [Sample report](https://teodorofodocrispin-cmyk.github.io/Intelica-docs/sample-report-japan.html) — Japan market entry example
 
 Payment network: Solana mainnet · Asset: USDC · No accounts, no subscriptions
