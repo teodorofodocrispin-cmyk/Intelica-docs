@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Intelica — Free Demo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0b14;--bg2:#0f1022;--surface:#12152a;--surface2:#181c35;
+  --border:#1e2340;--border2:#2a3060;
+  --text:#e8eaf0;--muted:#7880a0;--hint:#4a5270;
+  --accent:#7c6ef5;--accent2:#9d8fff;--pink:#c45afc;
+  --green:#3ecf8e;--amber:#f59e0b;--red:#ef4444;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 50% -5%,rgba(124,110,245,0.18) 0%,transparent 60%),
+  radial-gradient(ellipse 40% 40% at 85% 85%,rgba(196,90,252,0.07) 0%,transparent 50%);
+  pointer-events:none;z-index:0}
+body>*{position:relative;z-index:1}
+
+header{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:rgba(10,11,20,0.85);backdrop-filter:blur(12px)}
+.logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,#1a1a2e,#533483);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:15px;color:var(--accent2);border:1px solid rgba(124,110,245,0.3)}
+.logo-name{font-weight:600;font-size:16px;background:linear-gradient(90deg,#e8eaf0,#9d8fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.hdr-badge{font-family:var(--mono);font-size:10px;color:var(--green);background:rgba(62,207,142,0.1);border:1px solid rgba(62,207,142,0.2);padding:4px 12px;border-radius:20px}
+.hdr-link{font-size:13px;color:var(--accent2);text-decoration:none;padding:6px 14px;border:1px solid rgba(124,110,245,0.3);border-radius:8px;transition:all 0.15s}
+.hdr-link:hover{background:rgba(124,110,245,0.1)}
+
+.wrap{max-width:620px;margin:0 auto;padding:48px 20px 80px}
+
+.hero{text-align:center;margin-bottom:40px}
+.hero-tag{display:inline-block;font-family:var(--mono);font-size:10px;color:var(--green);background:rgba(62,207,142,0.08);border:1px solid rgba(62,207,142,0.2);padding:4px 14px;border-radius:20px;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-size:28px;font-weight:600;letter-spacing:-0.02em;line-height:1.2;margin-bottom:10px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--accent2),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--muted);font-size:14px;max-width:380px;margin:0 auto}
+
+/* Input card */
+.input-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:14px}
+.input-label{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.input-label::before{content:'';width:3px;height:10px;background:var(--accent);border-radius:2px}
+.co-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;font-family:var(--sans);font-size:15px;color:var(--text);outline:none;transition:border-color 0.2s;resize:none;min-height:80px}
+.co-input:focus{border-color:var(--accent)}
+.co-input::placeholder{color:var(--hint)}
+.char-count{text-align:right;font-family:var(--mono);font-size:10px;color:var(--hint);margin-top:6px}
+
+/* Examples */
+.examples{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.ex-btn{padding:5px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--muted);cursor:pointer;transition:all 0.15s;font-family:var(--sans)}
+.ex-btn:hover{border-color:var(--accent);color:var(--accent2)}
+
+/* Generate button */
+.gen-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:13px;color:white;font-family:var(--sans);font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 24px rgba(124,110,245,0.3)}
+.gen-btn:hover:not(:disabled){box-shadow:0 8px 32px rgba(124,110,245,0.45);transform:translateY(-1px)}
+.gen-btn:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none}
+.demo-note{text-align:center;font-size:11px;color:var(--hint);margin-top:10px;font-family:var(--mono)}
+
+/* Loading */
+.loading{display:none;text-align:center;padding:40px 24px;background:var(--surface);border:1px solid var(--border);border-radius:18px;margin-bottom:14px}
+.loading.show{display:block}
+.spinner{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{color:var(--muted);font-size:13px;font-family:var(--mono)}
+.lsteps{margin-top:12px}
+.lstep{font-size:11px;color:var(--hint);font-family:var(--mono);opacity:0;animation:fin 0.4s forwards}
+@keyframes fin{to{opacity:1}}
+
+/* Result card */
+.result-card{display:none;background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:14px}
+.result-card.show{display:block}
+
+.result-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.result-company{font-size:16px;font-weight:600}
+.result-mode{font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg2);padding:3px 10px;border-radius:20px;border:1px solid var(--border)}
+
+/* Score bar */
+.score-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.score-cell{background:var(--surface);padding:14px 18px;text-align:center}
+.score-val{font-family:var(--mono);font-size:20px;font-weight:500;line-height:1;margin-bottom:3px}
+.score-val.high{color:var(--red)}
+.score-val.medium{color:var(--amber)}
+.score-val.low{color:var(--green)}
+.score-val.accent{color:var(--accent2)}
+.score-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+
+/* Positioning */
+.result-body{padding:20px 22px}
+.field-label{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;margin-top:16px}
+.field-label:first-child{margin-top:0}
+.field-value{font-size:13px;color:var(--text);line-height:1.6}
+
+/* Locked fields */
+.locked-field{background:var(--bg2);border:1px dashed var(--border2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--hint)}
+.lock-icon{font-size:14px;flex-shrink:0}
+.locked-field span{color:var(--hint)}
+
+/* Upgrade CTA */
+.upgrade-cta{background:linear-gradient(135deg,rgba(124,110,245,0.12),rgba(196,90,252,0.08));border:1px solid rgba(124,110,245,0.25);border-radius:14px;padding:20px 22px;margin:16px 22px 22px;text-align:center}
+.upgrade-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.upgrade-sub{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6}
+.upgrade-plans{display:flex;gap:8px;margin-bottom:14px}
+.upgrade-plan{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center}
+.upgrade-plan-price{font-family:var(--mono);font-size:17px;font-weight:500;color:var(--accent2);line-height:1;margin-bottom:2px}
+.upgrade-plan-sub{font-size:10px;color:var(--muted)}
+.upgrade-plan-sub strong{color:var(--green)}
+.upgrade-btn{display:inline-block;padding:11px 28px;background:linear-gradient(135deg,var(--accent),var(--pink));border-radius:10px;color:white;font-size:13px;font-weight:500;text-decoration:none;transition:all 0.2s;box-shadow:0 4px 16px rgba(124,110,245,0.3)}
+.upgrade-btn:hover{box-shadow:0 6px 24px rgba(124,110,245,0.45);transform:translateY(-1px)}
+
+/* Error */
+.err-box{display:none;background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.2);border-radius:14px;padding:18px;margin-bottom:14px;text-align:center}
+.err-box.show{display:block}
+.err-title{font-size:13px;font-weight:500;color:var(--red);margin-bottom:5px}
+.err-msg{font-size:12px;color:var(--muted)}
+
+footer{border-top:1px solid var(--border);padding:20px;text-align:center;font-size:11px;color:var(--hint)}
+footer a{color:var(--accent2);text-decoration:none}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo-wrap" href="https://teodorofodocrispin-cmyk.github.io/Intelica-docs/intelica.html">
+    <div class="logo-mark">I</div>
+    <span class="logo-name">Intelica</span>
+  </a>
+  <div class="hdr-right">
+    <span class="hdr-badge">Free demo</span>
+    <a class="hdr-link" href="https://teodorofodocrispin-cmyk.github.io/Intelica-docs/intelica.html">Get full access →</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-tag">Free demo · No payment required</div>
+    <h1>See Intelica in action<br>on <em>any company</em></h1>
+    <p>Type a company name and get a real competitive intelligence preview — instantly.</p>
+  </div>
+
+  <!-- Input -->
+  <div class="input-card">
+    <div class="input-label">What company do you want to analyze?</div>
+    <textarea class="co-input" id="coIn" oninput="onInput()" maxlength="300"
+      placeholder="e.g. Notion, Stripe, Linear, Figma, Uniswap..."></textarea>
+    <div class="char-count"><span id="charCount">0</span> / 300</div>
+    <div class="examples">
+      <span class="ex-btn" onclick="setExample('Notion productivity app')">Notion</span>
+      <span class="ex-btn" onclick="setExample('Stripe online payments platform')">Stripe</span>
+      <span class="ex-btn" onclick="setExample('Linear project management for software teams')">Linear</span>
+      <span class="ex-btn" onclick="setExample('Figma collaborative design tool')">Figma</span>
+      <span class="ex-btn" onclick="setExample('Uniswap decentralized exchange protocol on Ethereum')">Uniswap</span>
+    </div>
+  </div>
+
+  <button class="gen-btn" id="genBtn" disabled onclick="runDemo()">
+    Analyze for free
+  </button>
+  <div class="demo-note">1 free analysis · No account · No payment</div>
+
+  <!-- Loading -->
+  <div class="loading" id="loadingEl">
+    <div class="spinner"></div>
+    <div class="loading-msg">Analyzing with Intelica…</div>
+    <div class="lsteps" id="lsteps"></div>
+  </div>
+
+  <!-- Error -->
+  <div class="err-box" id="errBox">
+    <div class="err-title" id="errTitle">Could not analyze</div>
+    <div class="err-msg" id="errMsg"></div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="resultCard">
+
+    <div class="result-header">
+      <div class="result-company" id="resCompany">—</div>
+      <div class="result-mode">competitive · demo preview</div>
+    </div>
+
+    <!-- Score -->
+    <div class="score-row">
+      <div class="score-cell">
+        <div class="score-val" id="resThreat">—</div>
+        <div class="score-lbl">Threat Level</div>
+      </div>
+      <div class="score-cell">
+        <div class="score-val accent" id="resMoat">—</div>
+        <div class="score-lbl">Moat Strength</div>
+      </div>
+      <div class="score-cell">
+        <div class="score-val" id="resMaturity">—</div>
+        <div class="score-lbl">Market Maturity</div>
+      </div>
+    </div>
+
+    <!-- Visible fields -->
+    <div class="result-body">
+      <div class="field-label">Positioning summary</div>
+      <div class="field-value" id="resPositioning">—</div>
+
+      <!-- Locked fields -->
+      <div class="field-label">Target customer</div>
+      <div class="locked-field"><span class="lock-icon">🔒</span><span>Upgrade to see full target customer profile</span></div>
+
+      <div class="field-label">Detected competitors</div>
+      <div class="locked-field"><span class="lock-icon">🔒</span><span>Upgrade to see full competitor landscape</span></div>
+
+      <div class="field-label">Core value propositions</div>
+      <div class="locked-field"><span class="lock-icon">🔒</span><span>Upgrade to see competitive moat analysis</span></div>
+
+      <div class="field-label">Pain points & entry angles</div>
+      <div class="locked-field"><span class="lock-icon">🔒</span><span>Upgrade to see user pain points and entry angles</span></div>
+
+      <div class="field-label">Verified sources</div>
+      <div class="locked-field"><span class="lock-icon">🔒</span><span>Upgrade to see real-time verified sources</span></div>
+    </div>
+
+    <!-- Upgrade CTA -->
+    <div class="upgrade-cta">
+      <div class="upgrade-title">Unlock the full report</div>
+      <div class="upgrade-sub">You just saw the market score and positioning.<br>The full report includes competitors, pain points, battlecard, verified sources, and market signals.</div>
+      <div class="upgrade-plans">
+        <div class="upgrade-plan">
+          <div class="upgrade-plan-price">$15</div>
+          <div class="upgrade-plan-sub">30 reports · 10 days<br><strong>$0.50/report</strong></div>
+        </div>
+        <div class="upgrade-plan">
+          <div class="upgrade-plan-price">$30</div>
+          <div class="upgrade-plan-sub">100 reports · 30 days<br><strong>$0.30/report</strong></div>
+        </div>
+      </div>
+      <a class="upgrade-btn" href="https://teodorofodocrispin-cmyk.github.io/Intelica-docs/intelica.html">
+        Get full access — pay once in USDC
+      </a>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <a href="https://teodorofodocrispin-cmyk.github.io/Intelica-docs/intelica.html">← Get full access</a> ·
+  <a href="https://api.intelica.dev">api.intelica.dev</a> ·
+  Intelica · Competitive intelligence for agents and founders
+</footer>
+
+<script>
+const API = 'https://api.intelica.dev';
+const STEPS = ['Searching verified sources…','Extracting market signals…','Analyzing competitive position…','Building market score…'];
+
+function onInput(){
+  const v = document.getElementById('coIn').value;
+  document.getElementById('charCount').textContent = v.length;
+  document.getElementById('genBtn').disabled = v.trim().length < 5;
+}
+
+function setExample(text){
+  document.getElementById('coIn').value = text;
+  onInput();
+  document.getElementById('coIn').focus();
+}
+
+async function runDemo(){
+  const text = document.getElementById('coIn').value.trim();
+  if(!text) return;
+
+  // Show loading
+  document.getElementById('genBtn').disabled = true;
+  document.getElementById('loadingEl').classList.add('show');
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('errBox').classList.remove('show');
+
+  const s = document.getElementById('lsteps'); s.innerHTML='';
+  STEPS.forEach((msg,i)=>{
+    const el=document.createElement('div');
+    el.className='lstep'; el.textContent=msg;
+    el.style.animationDelay=(i*1.1)+'s';
+    s.appendChild(el);
+  });
+
+  try{
+    const r = await fetch(`${API}/demo`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({text, mode:'competitive'})
+    });
+    const d = await r.json();
+
+    document.getElementById('loadingEl').classList.remove('show');
+
+    if(r.ok && d.analysis){
+      showResult(d.analysis, text);
+    } else if(r.status === 429){
+      showError('Demo limit reached', 'You've used your free demo. Get a plan to continue analyzing companies.');
+    } else {
+      showError('Analysis failed', d.detail || 'Something went wrong. Try again.');
+    }
+  }catch(e){
+    document.getElementById('loadingEl').classList.remove('show');
+    showError('Connection error', 'Could not connect to Intelica. Check your connection and try again.');
+    document.getElementById('genBtn').disabled = false;
+  }
+}
+
+function showResult(analysis, text){
+  const company = analysis.company_or_product || text.split(' ')[0];
+  document.getElementById('resCompany').textContent = company;
+  document.getElementById('resPositioning').textContent = analysis.positioning_summary || '—';
+
+  // Market score
+  const score = analysis.market_score || {};
+  const threat = (score.threat_level || '—').toUpperCase();
+  const threatEl = document.getElementById('resThreat');
+  threatEl.textContent = threat;
+  threatEl.className = 'score-val ' + (threat==='HIGH'?'high':threat==='MEDIUM'?'medium':'low');
+
+  const moat = score.moat_strength ? Math.round(score.moat_strength * 100) + '%' : '—';
+  document.getElementById('resMoat').textContent = moat;
+
+  const maturity = (score.market_maturity || '—').toUpperCase();
+  document.getElementById('resMaturity').textContent = maturity;
+
+  document.getElementById('resultCard').classList.add('show');
+  document.getElementById('resultCard').scrollIntoView({behavior:'smooth'});
+}
+
+function showError(title, msg){
+  document.getElementById('errTitle').textContent = title;
+  document.getElementById('errMsg').textContent = msg;
+  document.getElementById('errBox').classList.add('show');
+  document.getElementById('genBtn').disabled = false;
+}
+</script>
+</body>
+</html>
