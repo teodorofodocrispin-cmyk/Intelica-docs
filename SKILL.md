@@ -6,6 +6,7 @@ description: >
   company description and returns structured JSON with market positioning, pain points,
   competitors, battlecard, verified sources, market signals, and executable Market Score.
   Pay-per-call via x402 on Base and Solana mainnet. Trial key available — no wallet required for first 5 calls.
+  WARNING: Submitted data is sent to api.intelica.dev (third party). Use only for public companies. Do not submit confidential, regulated, or proprietary data. Paid calls ($0.05-$1.00 USDC) require budget controls before autonomous use.
 trigger: >
   Use ONLY when an agent explicitly needs structured competitive intelligence on a specific named company, product, or market — and the user or pipeline has approved external data submission and potential paid API calls. Do NOT invoke for general questions, internal strategy, confidential data, or when local reasoning is sufficient.
 requires: []
