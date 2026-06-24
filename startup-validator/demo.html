@@ -349,12 +349,12 @@
 
   <!-- Idea Input -->
   <label class="input-label">Startup Idea</label>
-  <textarea id="ideaInput" placeholder="Describe your startup idea in detail. Include: what it does, who it serves, what market it's in, and what problem it solves. More context = better analysis."></textarea>
+  <textarea id="ideaInput" placeholder="Describe your startup idea. Example: 'A Stripe competitor for developers in Southeast Asia — local payment methods, lower fees, same API simplicity.' More context = sharper analysis."></textarea>
 
   <div class="examples">
-    <span class="example-chip" onclick="fillExample(0)">AI legal docs for SMBs</span>
-    <span class="example-chip" onclick="fillExample(1)">B2B expense management LATAM</span>
-    <span class="example-chip" onclick="fillExample(2)">Competitive intelligence API</span>
+    <span class="example-chip" onclick="fillExample(0)">Stripe competitor — SEA/LATAM</span>
+    <span class="example-chip" onclick="fillExample(1)">AI legal docs for SMBs</span>
+    <span class="example-chip" onclick="fillExample(2)">B2B expense management LATAM</span>
     <span class="example-chip" onclick="fillExample(3)">Carbon credit marketplace</span>
   </div>
 
@@ -373,15 +373,19 @@
 
 <script>
 const EXAMPLES = [
+  "Stripe competitor for developer payments — a new payment infrastructure API targeting developers and SaaS companies in emerging markets (Southeast Asia, LATAM, Africa) where Stripe has limited local payment method coverage and high cross-border fees.",
   "AI-powered legal document review and contract analysis platform for small and medium businesses in Southeast Asia. Automates contract review, flags risks, and suggests edits. Targets SMB owners who currently rely on expensive lawyers for routine document work.",
   "B2B expense management and spend intelligence platform for mid-market companies in Latin America. Real-time spend visibility, automated receipt capture, and CFO dashboards in Spanish and Portuguese. Targeting the 50,000+ companies in Brazil and Mexico with 50-500 employees.",
-  "Competitive intelligence API for autonomous AI agents. Returns structured market analysis, competitor mapping, and strategic recommendations in JSON format. Pay-per-call via USDC on Base blockchain. No subscription required.",
   "Carbon credit marketplace connecting corporate sustainability teams with verified reforestation projects in the Amazon. Each credit is tokenized on Solana for full traceability. Targeting Fortune 500 ESG teams with 2030 net-zero commitments."
 ];
 
 function fillExample(i) {
   document.getElementById('ideaInput').value = EXAMPLES[i];
 }
+// Auto-load first example on page load
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('ideaInput').value = EXAMPLES[0];
+});
 
 const ACTION_CONFIG = {
   enter:   { icon: '🟢', label: 'ENTER',   cls: 'enter',   verdict: 'Go build it.' },
