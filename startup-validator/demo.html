@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Startup Opportunity Validator — Powered by Intelica</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg:        #0A0A12;
+    --surface:   #12121E;
+    --border:    #1E1E30;
+    --purple:    #7C6EF5;
+    --purple-dim:#3D3580;
+    --purple-bg: #1A1730;
+    --green:     #22C55E;
+    --green-bg:  #0F2318;
+    --red:       #EF4444;
+    --red-bg:    #200F0F;
+    --amber:     #F59E0B;
+    --amber-bg:  #1F1700;
+    --blue:      #3B82F6;
+    --blue-bg:   #0F1A2E;
+    --text:      #E8E8F0;
+    --text-mid:  #8888AA;
+    --text-dim:  #44445A;
+    --mono:      'JetBrains Mono', monospace;
+    --sans:      'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Header */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+  }
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: var(--purple);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: white;
+  }
+  .logo-text { font-size: 15px; font-weight: 600; color: var(--text); }
+  .logo-sub  { font-size: 12px; color: var(--text-mid); margin-left: 4px; }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+  .badge {
+    font-size: 11px; font-family: var(--mono);
+    background: var(--purple-bg); color: var(--purple);
+    border: 1px solid var(--purple-dim);
+    padding: 4px 10px; border-radius: 20px;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 64px 40px 48px;
+    max-width: 720px; margin: 0 auto; text-align: center;
+  }
+  .hero-eyebrow {
+    font-size: 11px; font-family: var(--mono);
+    color: var(--purple); letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 42px; font-weight: 700; line-height: 1.15;
+    color: var(--text); margin-bottom: 16px; letter-spacing: -0.02em;
+  }
+  .hero h1 span { color: var(--purple); }
+  .hero p {
+    font-size: 16px; color: var(--text-mid); line-height: 1.7;
+    max-width: 520px; margin: 0 auto 32px;
+  }
+
+  /* Stats bar */
+  .stats {
+    display: flex; gap: 0; justify-content: center;
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin-bottom: 48px;
+    background: var(--surface);
+  }
+  .stat {
+    flex: 1; padding: 16px 24px; text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-size: 22px; font-weight: 700; color: var(--purple); font-family: var(--mono); }
+  .stat-lbl { font-size: 11px; color: var(--text-mid); margin-top: 2px; }
+
+  /* Input area */
+  .input-area {
+    max-width: 720px; margin: 0 auto; padding: 0 40px 48px;
+  }
+  .input-label {
+    font-size: 12px; font-weight: 500; color: var(--text-mid);
+    margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  textarea {
+    width: 100%; background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px; font-family: var(--sans); font-size: 15px;
+    line-height: 1.6; resize: none; outline: none; transition: border-color 0.2s;
+    height: 120px;
+  }
+  textarea:focus { border-color: var(--purple); }
+  textarea::placeholder { color: var(--text-dim); }
+
+  .input-row {
+    display: flex; gap: 12px; margin-top: 12px; align-items: center;
+  }
+  .input-hint { font-size: 12px; color: var(--text-dim); flex: 1; }
+
+  .btn {
+    background: var(--purple); color: white;
+    border: none; border-radius: 10px; padding: 12px 28px;
+    font-family: var(--sans); font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .btn:hover { background: #8F82F8; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* Examples */
+  .examples {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;
+  }
+  .example-chip {
+    font-size: 12px; color: var(--text-mid);
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 20px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .example-chip:hover { border-color: var(--purple); color: var(--purple); }
+
+  /* Results */
+  .results { max-width: 720px; margin: 0 auto; padding: 0 40px 80px; }
+
+  .loading {
+    text-align: center; padding: 48px;
+    color: var(--text-mid); font-size: 14px;
+  }
+  .loading-dot {
+    display: inline-block; width: 6px; height: 6px;
+    background: var(--purple); border-radius: 50%;
+    margin: 0 3px; animation: pulse 1.2s infinite;
+  }
+  .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,80%,100%{transform:scale(0);opacity:0.3} 40%{transform:scale(1);opacity:1} }
+
+  /* Verdict card */
+  .verdict-card {
+    border-radius: 14px; padding: 24px 28px; margin-bottom: 16px;
+    border: 1px solid; animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+  .verdict-enter  { background: var(--green-bg);  border-color: #166534; }
+  .verdict-avoid  { background: var(--red-bg);    border-color: #7f1d1d; }
+  .verdict-monitor{ background: var(--amber-bg);  border-color: #78350f; }
+  .verdict-acquire{ background: var(--blue-bg);   border-color: #1e3a5f; }
+  .verdict-partner{ background: var(--purple-bg); border-color: var(--purple-dim); }
+
+  .verdict-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  .verdict-icon { font-size: 32px; }
+  .verdict-action { font-size: 22px; font-weight: 700; font-family: var(--mono); }
+  .verdict-action.enter   { color: var(--green); }
+  .verdict-action.avoid   { color: var(--red); }
+  .verdict-action.monitor { color: var(--amber); }
+  .verdict-action.acquire { color: var(--blue); }
+  .verdict-action.partner { color: var(--purple); }
+
+  .verdict-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+  .verdict-meta-item {
+    font-size: 12px; font-family: var(--mono);
+    background: rgba(255,255,255,0.05); padding: 4px 10px;
+    border-radius: 6px; color: var(--text-mid);
+  }
+  .verdict-rationale {
+    font-size: 14px; color: var(--text); line-height: 1.6;
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* Section cards */
+  .section-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 24px; margin-bottom: 12px;
+    animation: fadeIn 0.3s ease;
+  }
+  .section-title {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--text-mid); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .imi-bar {
+    height: 8px; background: var(--border); border-radius: 4px;
+    overflow: hidden; margin: 10px 0 6px;
+  }
+  .imi-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--green), var(--amber), var(--red));
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+  .imi-labels {
+    display: flex; justify-content: space-between;
+    font-size: 10px; font-family: var(--mono); color: var(--text-dim);
+  }
+  .imi-value {
+    font-size: 36px; font-weight: 700; font-family: var(--mono);
+    color: var(--text); margin-bottom: 4px;
+  }
+  .imi-sub { font-size: 12px; color: var(--text-mid); }
+
+  .list-item {
+    display: flex; gap: 10px; padding: 8px 0;
+    border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text);
+    line-height: 1.5;
+  }
+  .list-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .list-dot { color: var(--purple); margin-top: 2px; flex-shrink: 0; }
+
+  .competitor-chip {
+    display: inline-block; font-size: 12px; font-family: var(--mono);
+    background: rgba(124,110,245,0.1); border: 1px solid var(--purple-dim);
+    color: var(--purple); padding: 4px 10px; border-radius: 6px; margin: 3px;
+  }
+
+  .budget-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .budget-row:last-child { border-bottom: none; }
+  .budget-label { color: var(--text-mid); }
+  .budget-value { font-family: var(--mono); color: var(--text); font-weight: 500; }
+
+  .pitch-slide {
+    display: flex; gap: 14px; padding: 10px 0;
+    border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .pitch-slide:last-child { border-bottom: none; }
+  .slide-num {
+    font-family: var(--mono); color: var(--purple); font-size: 11px;
+    font-weight: 600; min-width: 60px; padding-top: 1px;
+  }
+  .slide-text { color: var(--text); line-height: 1.5; }
+
+  .insight-box {
+    background: var(--purple-bg); border: 1px solid var(--purple-dim);
+    border-radius: 10px; padding: 14px 16px;
+    font-size: 13px; color: var(--text); line-height: 1.6; font-style: italic;
+  }
+
+  .pulse-box {
+    background: var(--green-bg); border: 1px solid #166534;
+    border-radius: 10px; padding: 14px 16px;
+    font-size: 13px; color: var(--green); line-height: 1.5;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+
+  .api-key-row {
+    display: flex; gap: 8px; margin-top: 8px;
+  }
+  input[type=text] {
+    flex: 1; background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; font-family: var(--mono); font-size: 13px;
+    outline: none; transition: border-color 0.2s;
+  }
+  input[type=text]:focus { border-color: var(--purple); }
+  input[type=text]::placeholder { color: var(--text-dim); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border); padding: 24px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface); font-size: 12px; color: var(--text-dim);
+  }
+  footer a { color: var(--purple); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">I</div>
+  <div>
+    <span class="logo-text">Intelica</span>
+    <span class="logo-sub">Startup Opportunity Validator</span>
+  </div>
+  <div class="header-right">
+    <span class="badge">3,600+ companies in graph</span>
+    <span class="badge">v4.5.6</span>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">Powered by Intelica Competitive Graph</div>
+  <h1>Stop guessing.<br><span>Ask the graph.</span></h1>
+  <p>Evaluate any startup idea against 3,600+ companies with structural moat scoring. Get a go/no-go decision, execution plan, and pitch outline in seconds.</p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">3,611</div>
+      <div class="stat-lbl">Companies in graph</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0.638</div>
+      <div class="stat-lbl">Avg IMI score</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-lbl">Decision actions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">$0.05</div>
+      <div class="stat-lbl">Per analysis</div>
+    </div>
+  </div>
+</div>
+
+<div class="input-area">
+  <!-- API Key -->
+  <label class="input-label">Your Intelica Session Key</label>
+  <div class="api-key-row">
+    <input type="text" id="sessionKey" placeholder="TEOCRISPIN-INTELICA-GRAPH or your-session-key"
+           value="">
+  </div>
+  <div style="font-size:11px;color:var(--text-dim);margin-top:6px;margin-bottom:20px;">
+    Get a free key at <a href="https://api.intelica.dev" target="_blank" style="color:var(--purple)">api.intelica.dev</a>
+  </div>
+
+  <!-- Idea Input -->
+  <label class="input-label">Startup Idea</label>
+  <textarea id="ideaInput" placeholder="Describe your startup idea in detail. Include: what it does, who it serves, what market it's in, and what problem it solves. More context = better analysis."></textarea>
+
+  <div class="examples">
+    <span class="example-chip" onclick="fillExample(0)">AI legal docs for SMBs</span>
+    <span class="example-chip" onclick="fillExample(1)">B2B expense management LATAM</span>
+    <span class="example-chip" onclick="fillExample(2)">Competitive intelligence API</span>
+    <span class="example-chip" onclick="fillExample(3)">Carbon credit marketplace</span>
+  </div>
+
+  <div class="input-row">
+    <div class="input-hint">Results include IMI score, decision, execution plan, and pitch outline</div>
+    <button class="btn" id="analyzeBtn" onclick="analyze()">Analyze Idea →</button>
+  </div>
+</div>
+
+<div class="results" id="results"></div>
+
+<footer>
+  <span>Open-source validator · <a href="https://github.com/teodorofodocrispin-cmyk/Intelica-docs" target="_blank">GitHub</a></span>
+  <span>Powered by <a href="https://api.intelica.dev" target="_blank">Intelica</a> — Competitive Intelligence API</span>
+</footer>
+
+<script>
+const EXAMPLES = [
+  "AI-powered legal document review and contract analysis platform for small and medium businesses in Southeast Asia. Automates contract review, flags risks, and suggests edits. Targets SMB owners who currently rely on expensive lawyers for routine document work.",
+  "B2B expense management and spend intelligence platform for mid-market companies in Latin America. Real-time spend visibility, automated receipt capture, and CFO dashboards in Spanish and Portuguese. Targeting the 50,000+ companies in Brazil and Mexico with 50-500 employees.",
+  "Competitive intelligence API for autonomous AI agents. Returns structured market analysis, competitor mapping, and strategic recommendations in JSON format. Pay-per-call via USDC on Base blockchain. No subscription required.",
+  "Carbon credit marketplace connecting corporate sustainability teams with verified reforestation projects in the Amazon. Each credit is tokenized on Solana for full traceability. Targeting Fortune 500 ESG teams with 2030 net-zero commitments."
+];
+
+function fillExample(i) {
+  document.getElementById('ideaInput').value = EXAMPLES[i];
+}
+
+const ACTION_CONFIG = {
+  enter:   { icon: '🟢', label: 'ENTER',   cls: 'enter',   verdict: 'Go build it.' },
+  avoid:   { icon: '🔴', label: 'AVOID',   cls: 'avoid',   verdict: 'Moat is too strong — pivot first.' },
+  monitor: { icon: '🟡', label: 'MONITOR', cls: 'monitor', verdict: 'Market in transition — wait for signal.' },
+  acquire: { icon: '🔵', label: 'ACQUIRE', cls: 'acquire', verdict: 'Buy the moat, don\'t build against it.' },
+  partner: { icon: '🟣', label: 'PARTNER', cls: 'partner', verdict: 'Alliance creates more value than competition.' },
+};
+
+async function analyze() {
+  const idea = document.getElementById('ideaInput').value.trim();
+  const key  = document.getElementById('sessionKey').value.trim();
+  const btn  = document.getElementById('analyzeBtn');
+  const out  = document.getElementById('results');
+
+  if (!idea || idea.length < 30) {
+    out.innerHTML = '<div class="section-card" style="color:var(--red)">Please describe your startup idea in more detail (30+ characters).</div>';
+    return;
+  }
+  if (!key) {
+    out.innerHTML = '<div class="section-card" style="color:var(--amber)">Please enter your Intelica session key above. Get one free at api.intelica.dev</div>';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Analyzing...';
+  out.innerHTML = `<div class="loading">
+    <span class="loading-dot"></span>
+    <span class="loading-dot"></span>
+    <span class="loading-dot"></span>
+    <div style="margin-top:16px">Querying the competitive graph...</div>
+  </div>`;
+
+  try {
+    const response = await fetch('https://api.intelica.dev/intel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-SESSION': key },
+      body: JSON.stringify({ text: idea, mode: 'venture_screening', force_refresh: true })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      out.innerHTML = `<div class="section-card" style="color:var(--red)">API Error: ${data.detail || data.error || 'Unknown error'}</div>`;
+      return;
+    }
+
+    renderResults(data, idea);
+
+  } catch(e) {
+    out.innerHTML = `<div class="section-card" style="color:var(--red)">Network error: ${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Analyze Idea →';
+  }
+}
+
+function renderResults(data, idea) {
+  const dr         = data.decision_recommendation || {};
+  const ep         = data.execution_plan || {};
+  const ms         = data.market_score || {};
+  const brief      = data.executive_brief || {};
+  const action     = dr.action || 'monitor';
+  const cfg        = ACTION_CONFIG[action] || ACTION_CONFIG.monitor;
+  const imi        = data.intelica_moat_index || 0;
+  const competitors= data.detected_competitors || [];
+  const thresholds = dr.thresholds_applied || {};
+  const ae         = data.auto_executed;
+
+  let html = '';
+
+  // Verdict card
+  html += `<div class="verdict-card verdict-${cfg.cls}">
+    <div class="verdict-header">
+      <div class="verdict-icon">${cfg.icon}</div>
+      <div>
+        <div class="verdict-action ${cfg.cls}">${cfg.label}</div>
+        <div style="font-size:13px;color:var(--text-mid);margin-top:2px">${cfg.verdict}</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-size:11px;color:var(--text-dim);font-family:var(--mono)">CONFIDENCE</div>
+        <div style="font-size:22px;font-weight:700;font-family:var(--mono)">${((dr.confidence_score||0)*100).toFixed(0)}%</div>
+      </div>
+    </div>
+    <div class="verdict-meta">
+      <span class="verdict-meta-item">IMI ${imi.toFixed(2)}</span>
+      <span class="verdict-meta-item">risk: ${dr.risk_level || 'medium'}</span>
+      <span class="verdict-meta-item">market: ${ms.market_maturity || 'unknown'}</span>
+      <span class="verdict-meta-item">threat: ${ms.threat_level || 'unknown'}</span>
+    </div>
+    <div class="verdict-rationale">${dr.rationale || 'Analysis complete.'}</div>
+  </div>`;
+
+  // IMI Score
+  html += `<div class="section-card">
+    <div class="section-title">Intelica Moat Index</div>
+    <div class="imi-value">${imi.toFixed(2)}</div>
+    <div class="imi-sub">Structural moat strength of the competitive landscape</div>
+    <div class="imi-bar"><div class="imi-fill" style="width:${imi*100}%"></div></div>
+    <div class="imi-labels">
+      <span>0.00 — No moat</span>
+      <span>Enter &lt; ${thresholds.imi_enter_max||0.65}</span>
+      <span>Monitor ${thresholds.imi_monitor_range||'0.65–0.80'}</span>
+      <span>Avoid &gt; ${thresholds.imi_avoid_min||0.80}</span>
+      <span>1.00 — Unassailable</span>
+    </div>
+  </div>`;
+
+  // Competitors
+  if (competitors.length) {
+    html += `<div class="section-card">
+      <div class="section-title">Detected Competitors</div>
+      <div>${competitors.map(c=>`<span class="competitor-chip">${c}</span>`).join('')}</div>
+      ${brief.leader ? `<div style="font-size:13px;color:var(--text-mid);margin-top:12px">Leader: ${brief.leader}</div>` : ''}
+      ${brief.recent_move ? `<div style="font-size:13px;color:var(--text-mid);margin-top:4px">Recent move: ${brief.recent_move}</div>` : ''}
+    </div>`;
+  }
+
+  // Non-obvious insight
+  const insight = ep.non_obvious_insight || data.unique_angle;
+  if (insight) {
+    html += `<div class="section-card">
+      <div class="section-title">Non-Obvious Insight</div>
+      <div class="insight-box">${insight}</div>
+    </div>`;
+  }
+
+  // Week 1 actions (if enter)
+  if (action === 'enter' && ep.week_1_actions?.length) {
+    html += `<div class="section-card">
+      <div class="section-title">Week 1 — Start Here</div>
+      ${ep.week_1_actions.map(a=>`<div class="list-item"><span class="list-dot">→</span><span>${a}</span></div>`).join('')}
+    </div>`;
+  }
+
+  // Pivot suggestions (if avoid)
+  if (action === 'avoid') {
+    const pivots = [
+      `Vertical niche: target a sub-segment that ${competitors[0]||'incumbents'} ignores`,
+      `Geographic arbitrage: enter markets where ${brief.leader||'the leader'} has no local presence`,
+      `Distribution pivot: reach the same customer through an alternative channel that bypasses the moat`,
+    ];
+    html += `<div class="section-card">
+      <div class="section-title">Pivot Suggestions</div>
+      ${pivots.map(p=>`<div class="list-item"><span class="list-dot">↗</span><span>${p}</span></div>`).join('')}
+    </div>`;
+  }
+
+  // Budget
+  const bg = ep.budget_guidance || {};
+  if (bg.phase_1_usd || bg.total_12m_usd) {
+    html += `<div class="section-card">
+      <div class="section-title">Budget Guidance</div>
+      ${bg.phase_1_usd ? `<div class="budget-row"><span class="budget-label">Phase 1</span><span class="budget-value">${bg.phase_1_usd}</span></div>` : ''}
+      ${bg.phase_2_usd ? `<div class="budget-row"><span class="budget-label">Phase 2</span><span class="budget-value">${bg.phase_2_usd}</span></div>` : ''}
+      ${bg.total_12m_usd ? `<div class="budget-row"><span class="budget-label">Total 12 months</span><span class="budget-value">${bg.total_12m_usd}</span></div>` : ''}
+    </div>`;
+  }
+
+  // Validation signals
+  if (ep.validation_signals?.length) {
+    html += `<div class="section-card">
+      <div class="section-title">Validation Signals</div>
+      ${ep.validation_signals.map(s=>`<div class="list-item"><span class="list-dot">✓</span><span>${s}</span></div>`).join('')}
+    </div>`;
+  }
+
+  // Auto-executed Pulse
+  if (ae) {
+    html += `<div class="section-card">
+      <div class="section-title">Auto-Executed</div>
+      <div class="pulse-box">
+        <span>⚡</span>
+        <span>${ae.message || 'Pulse subscription active'}</span>
+      </div>
+    </div>`;
+  }
+
+  // Powered by
+  html += `<div style="text-align:center;padding:24px 0;font-size:12px;color:var(--text-dim)">
+    Analysis powered by <a href="https://api.intelica.dev" target="_blank" style="color:var(--purple)">Intelica</a> 
+    — 3,600+ company graph · $0.05/call via x402
+  </div>`;
+
+  document.getElementById('results').innerHTML = html;
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
