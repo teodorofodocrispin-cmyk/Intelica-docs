@@ -28,7 +28,7 @@
     "price_per_call": "0.05",
     "price_batch": "0.20",
     "wallets": {
-      "base": "0x1d6bA7ac2461fd0E17D6A4C7bc1c9Ce365EfC4FF",
+      "base": "0xCf1d31020A7915421f6d66B9835Dcb6f422337E7",
       "solana": "45q8KyCAGSHHd6qYP2ZkEJh22SzeQeXRfyFsENcx3KN6"
     }
   },
