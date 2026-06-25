@@ -460,7 +460,7 @@ Payment network: Solana mainnet · Asset: USDC · No accounts, no subscriptions
 - **Persistence:** Supabase (PostgreSQL)
 - **Deploy:** Render (AWS us-east)
 - **Wallets:**
-  - Base: `0x1d6bA7ac2461fd0E17D6A4C7bc1c9Ce365EfC4FF`
+  - Base: `0xCf1d31020A7915421f6d66B9835Dcb6f422337E7`
   - Solana: `45q8KyCAGSHHd6qYP2ZkEJh22SzeQeXRfyFsENcx3KN6`
 
 ---
